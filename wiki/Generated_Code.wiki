@@ -9,14 +9,14 @@ on the structures.
 
 = Naming and Casing Conventions =
 
-  * The name of the type for enums and messages and services is camel case (meaning !WordsAreCrammedTogether!) except that double-underscores are used to delimit scopes.  For example:
+  * The name of the type for enums and messages and services is camel case (meaning !WordsAreCrammedTogether) except that double-underscores are used to delimit scopes.  For example:
 {{{
                 package foo.bar;
                 message BazBah {
                   int32 val;
                 }
 }}}
-would generate a C type `Foo__Bar__BazBah`.</para>
+  would generate a C type `Foo__Bar__BazBah`.</para>
 
   * Functions and globals are all lowercase, with camel-case
 words separated by single underscores.  For example:
