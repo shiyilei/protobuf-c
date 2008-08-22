@@ -2,12 +2,30 @@
 
 = Introduction =
 
-protobuf-c is a C binding for Google's Protocol Buffers (aka protobuf) library and code generator.
+protobuf-c is a C binding for Google's [http://code.google.com/p/protobuf/ Protocol Buffers] (aka protobuf) library and code generator.
 
 The overall [Design design] is similar to the C++ structure,
 except we try to generate as little code as possible.
 
+= Compilation and Installation =
+This is an automake project, so to build it use something like:
+{{{
+   ./configure --prefix=$HOME/install
+   make
+   make install
+}}}
+To install into `/usr` like a normal package would, use `--prefix=/usr`.
+
+= Getting Started =
 To use the system, you should read more
 about [Generated_Code the code we generate].
 To understand how the generated code works,
 read about [libprotobuf_c].
+
+= Caveats =
+As of now, this system has not had much testing.
+
+Some binary compatibility changes are expected until version 1.0 is released; so make sure you are linking to the protobuf-c that corresponds to the generated code you are using!
+
+= TODO items =
+Currently, these are in a file called `TODO` in the source package.
