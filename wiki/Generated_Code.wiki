@@ -1,31 +1,31 @@
-﻿  = The Generated Code
-   For each enum, we generate a C enum.
-   For each message, we generate a C structure
-   which can be cast to a <type>ProtobufCMessage</type>.
+﻿= The Generated Code =
+For each enum, we generate a C enum.
+For each message, we generate a C structure
+which can be cast to a <type>ProtobufCMessage</type>.
 
-   For each enum and message, we generate a descriptor
-   object that allows us to implement a kind of reflection
-   on the structures.
+For each enum and message, we generate a descriptor
+object that allows us to implement a kind of reflection
+on the structures.
 
 First, some naming conventions:
-* The name of the type for enums and messages and services is camel case (meaning <nowiki>WordsAreCrammedTogether</nowiki>) except that double-underscores are used to delimit scopes.  For example:
-      package foo.bar;
-      message BazBah {
-        int32 val;
-      }
-would generate a C type <type>Foo__Bar__BazBah</type>.</para>
+  * The name of the type for enums and messages and services is camel case (meaning <nop>WordsAreCrammedTogether) except that double-underscores are used to delimit scopes.  For example:
+		package foo.bar;
+		message BazBah {
+		  int32 val;
+		}
+  would generate a C type <type>Foo__Bar__BazBah</type>.</para>
 
-* Functions and globals are all lowercase, with camel-case
-words separated by single underscores.
-For example:
-<nowiki>
-     Foo__Bar__BazBah *foo__bar__baz_bah__unpack
-                           (ProtobufCAllocator  *allocator,
-			    size_t length,
-			    const unsigned char *data);
-</nowiki>
-* Enums values are all uppercase.
-* Stuff we dd to your symbol names will also be separated by a double-underscore.  For example, the unpack method above.
+  * Functions and globals are all lowercase, with camel-case
+  words separated by single underscores.
+  For example:
+  <nowiki>
+	   Foo__Bar__BazBah *foo__bar__baz_bah__unpack
+							 (ProtobufCAllocator  *allocator,
+				  size_t length,
+				  const unsigned char *data);
+  </nowiki>
+  * Enums values are all uppercase.
+  * Stuff we dd to your symbol names will also be separated by a double-underscore.  For example, the unpack method above.
 
 We also generate descriptor objects for messages and enums.
 These are declared in the .h files:
