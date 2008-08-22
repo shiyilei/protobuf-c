@@ -9,7 +9,7 @@ on the structures.
 
 = Naming and Casing Conventions =
 
-  * The name of the type for enums and messages and services is camel case (meaning <nop>WordsAreCrammedTogether) except that double-underscores are used to delimit scopes.  For example:
+  * The name of the type for enums and messages and services is camel case (meaning WordsAreCrammedTogether!) except that double-underscores are used to delimit scopes.  For example:
 {{{
                 package foo.bar;
                 message BazBah {
@@ -27,7 +27,7 @@ words separated by single underscores.  For example:
                                   const unsigned char *data);
 }}}
   * Enums values are all uppercase.
-  * Stuff we dd to your symbol names will also be separated by a double-underscore.  For example, the unpack method above.
+  * Stuff we add to your symbol names will also be separated by a double-underscore.  For example, the unpack method above.
 
 = Descriptors =
 
@@ -40,13 +40,16 @@ These are declared in the .h files:
 The message structures all begin with `ProtobufCMessageDescriptor*`
 which is sufficient to allow them to be cast to `ProtobufCMessage`.
 
+= Message Methods =
+
 We generate some functions for each message:
-  * `unpack()`.  Unpack data for a particular message-format: {{{
+  * `unpack()`.  Unpack data for a particular message-format, using an optional allocator for the data:
+{{{
      Foo__Bar__BazBah *
      foo__bar__baz_bah__unpack  (ProtobufCAllocator *allocator,
                                  size_t length,
                                  const unsigned char *data);
-}}} Note that `allocator` may be NULL.
+}}}
   * `free_unpacked()`.  Free a message that you obtained with the unpack method:
 {{{
      void

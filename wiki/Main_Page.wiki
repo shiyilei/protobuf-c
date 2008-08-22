@@ -11,10 +11,3 @@ To use the system, you should read more
 about [Generated_Code the code we generate].
 To understand how the generated code works,
 read about [libprotobuf_c].
-
- </section>
- <section>
-  <title>Author</title>
-    <para>Dave Benson.</para>
- </section>
-</article>
