@@ -38,7 +38,7 @@ The message structures all begin with `ProtobufCMessageDescriptor*`
 which is sufficient to allow them to be cast to `ProtobufCMessage`.
 
 We generate some functions for each message:
-* `unpack()`.  Unpack data for a particular message-format:
+  * `unpack()`.  Unpack data for a particular message-format:
 {{{
      Foo__Bar__BazBah *
      foo__bar__baz_bah__unpack  (ProtobufCAllocator *allocator,
@@ -46,21 +46,21 @@ We generate some functions for each message:
 				 const unsigned char *data);
 }}}
 Note that <parameter>allocator</parameter> may be NULL.
-* `free_unpacked()`.  Free a message
+  * `free_unpacked()`.  Free a message
 that you obtained with the unpack method:
 {{{
      void
      foo__bar__baz_bah__free_unpacked  (Foo__Bar__BazBah *baz_bah,
 				        ProtobufCAllocator *allocator);
 }}}
-* `get_packed_size()`.  Find how long 
+  * `get_packed_size()`.  Find how long 
 the serialized representation of the data will be:
 {{{
      size_t
      foo__bar__baz_bah__get_packed_size 
                         (const Foo__Bar__BazBah *message);
 }}}
-* `pack()`.  Pack message into buffer;
+  * `pack()`.  Pack message into buffer;
 assumes that buffer is long enough (use get_packed_size first!).
 {{{
      size_t
@@ -68,7 +68,7 @@ assumes that buffer is long enough (use get_packed_size first!).
                         (const Foo__Bar__BazBah *message,
 			 unsigned char *packed_data_out);
 }}}
-* `pack_to_buffer()`.  Pack message into virtualized buffer.
+  * `pack_to_buffer()`.  Pack message into virtualized buffer.
 {{{
      size_t
      foo__bar__baz_bah__pack_to_buffer
