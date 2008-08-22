@@ -9,58 +9,69 @@ on the structures.
 
 First, some naming conventions:
   * The name of the type for enums and messages and services is camel case (meaning <nop>WordsAreCrammedTogether) except that double-underscores are used to delimit scopes.  For example:
+{{{
 		package foo.bar;
 		message BazBah {
 		  int32 val;
 		}
-  would generate a C type <type>Foo__Bar__BazBah</type>.</para>
+}}}
+would generate a C type <type>Foo__Bar__BazBah</type>.</para>
 
   * Functions and globals are all lowercase, with camel-case
-  words separated by single underscores.
-  For example:
-  <nowiki>
+words separated by single underscores.  For example:
+{{{
 	   Foo__Bar__BazBah *foo__bar__baz_bah__unpack
 							 (ProtobufCAllocator  *allocator,
 				  size_t length,
 				  const unsigned char *data);
-  </nowiki>
+}}}
   * Enums values are all uppercase.
   * Stuff we dd to your symbol names will also be separated by a double-underscore.  For example, the unpack method above.
 
 We also generate descriptor objects for messages and enums.
 These are declared in the .h files:
+{{{
    extern const ProtobufCMessageDescriptor
                      foo__bar__baz_bah__descriptor;
-
-The message structures all begin with <tt>ProtobufCMessageDescriptor*</tt>
-which is sufficient to allow them to be cast to <tt>ProtobufCMessage</tt>.
+}}}
+The message structures all begin with `ProtobufCMessageDescriptor*`
+which is sufficient to allow them to be cast to `ProtobufCMessage`.
 
 We generate some functions for each message:
-* <tt>unpack()</tt>.  Unpack data for a particular message-format:
+* `unpack()`.  Unpack data for a particular message-format:
+{{{
      Foo__Bar__BazBah *
      foo__bar__baz_bah__unpack  (ProtobufCAllocator *allocator,
                                  size_t length,
 				 const unsigned char *data);
+}}}
 Note that <parameter>allocator</parameter> may be NULL.
-* <tt>free_unpacked()</tt>.  Free a message
+* `free_unpacked()`.  Free a message
 that you obtained with the unpack method:
+{{{
      void
      foo__bar__baz_bah__free_unpacked  (Foo__Bar__BazBah *baz_bah,
 				        ProtobufCAllocator *allocator);
-* <tt>get_packed_size()</tt>.  Find how long 
+}}}
+* `get_packed_size()`.  Find how long 
 the serialized representation of the data will be:
+{{{
      size_t
      foo__bar__baz_bah__get_packed_size 
                         (const Foo__Bar__BazBah *message);
-* <tt>pack()</tt>.  Pack message into buffer;
+}}}
+* `pack()`.  Pack message into buffer;
 assumes that buffer is long enough (use get_packed_size first!).
+{{{
      size_t
      foo__bar__baz_bah__pack
                         (const Foo__Bar__BazBah *message,
 			 unsigned char *packed_data_out);
-* <tt>pack_to_buffer()</tt>.  Pack message into virtualized buffer.
+}}}
+* `pack_to_buffer()`.  Pack message into virtualized buffer.
+{{{
      size_t
      foo__bar__baz_bah__pack_to_buffer
                         (const Foo__Bar__BazBah *message,
 			 ProtobufCBuffer *buffer);
-   
+}}}
