@@ -41,14 +41,12 @@ The message structures all begin with `ProtobufCMessageDescriptor*`
 which is sufficient to allow them to be cast to `ProtobufCMessage`.
 
 We generate some functions for each message:
-  * `unpack()`.  Unpack data for a particular message-format:
-{{{
+  * `unpack()`.  Unpack data for a particular message-format: {{{
      Foo__Bar__BazBah *
      foo__bar__baz_bah__unpack  (ProtobufCAllocator *allocator,
                                  size_t length,
                                  const unsigned char *data);
-}}}
-Note that `allocator` may be NULL.
+}}} Note that `allocator` may be NULL.
   * `free_unpacked()`.  Free a message that you obtained with the unpack method:
 {{{
      void
