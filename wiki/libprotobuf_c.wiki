@@ -82,9 +82,11 @@ And finally services are described by:
 We defined typedefs for a few types
 which are used in .proto files but do not
 have obvious standard C equivalents:
+
 * a boolean type (`protobuf_c_boolean`)
 * a binary-data (bytes) type (`ProtobufCBinaryData`)
 * the various int types (`int32_t`, `uint32_t`, `int64_t`, `uint64_t`)
+
 are obtained by including <tt>inttypes.h</tt>
 
 We also define a simple allocator object, `ProtobufCAllocator`
