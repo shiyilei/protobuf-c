@@ -1,0 +1,201 @@
+﻿= The protobuf-c Library =
+
+This library is used by the generated code;
+it includes common structures and enums,
+as well as functions that most users of the generated code
+will want.
+
+There are three main components:
+* the Descriptor structures
+* helper structures and objects
+* packing and unpacking code
+
+== The Descriptor Structures ==
+For example, enums are described in terms of structures:
+
+{{{
+    struct _ProtobufCEnumValue
+    {
+      const char *name;
+      const char *c_name;
+      int value;
+    };
+
+    struct _ProtobufCEnumDescriptor
+    {
+      const char *name;
+      const char *short_name;
+      const char *package_name;
+
+      /* sorted by value */
+      unsigned n_values;
+      const ProtobufCEnumValue *values;
+
+      /* sorted by name */
+      unsigned n_value_names;
+      const ProtobufCEnumValue *values_by_name;
+    };
+}}}
+
+Likewise, messages are described by:
+{{{
+      struct _ProtobufCFieldDescriptor
+      {
+        const char *name;
+        int id;
+        ProtobufCFieldLabel label;
+        ProtobufCFieldType type;
+        unsigned quantifier_offset;
+        unsigned offset;
+        void *descriptor;       /* for MESSAGE and ENUM types */
+      };
+      struct _ProtobufCMessageDescriptor
+      {
+        const char *name;
+        const char *short_name;
+        const char *package_name;
+
+        /* sorted by field-id */
+        unsigned n_fields;
+        const ProtobufCFieldDescriptor *fields;
+      };
+}}}
+
+And finally services are described by:
+{{{
+      struct _ProtobufCMethodDescriptor
+      {
+        const char *name;
+        const ProtobufCMessageDescriptor *input;
+        const ProtobufCMessageDescriptor *output;
+      };
+      struct _ProtobufCServiceDescriptor
+      {
+        const char *name;
+        unsigned n_methods;
+        ProtobufCMethodDescriptor *methods;             // sorted by name
+      };
+}}}
+
+== Helper Structures and Typedefs ==
+
+We defined typedefs for a few types
+which are used in .proto files but do not
+have obvious standard C equivalents:
+* a boolean type (`protobuf_c_boolean`)
+* a binary-data (bytes) type (`ProtobufCBinaryData`)
+* the various int types (`int32_t`, `uint32_t`, `int64_t`, `uint64_t`)
+are obtained by including <tt>inttypes.h</tt>
+
+We also define a simple allocator object, `ProtobufCAllocator`
+that let's you control how allocations are done.
+This is predominately used for parsing.
+
+There is a virtual buffer facility that 
+only has to implement a method to append binary-data
+to the buffer.  This can be used to serialize messages
+to different targets (instead of a flat slab of data).
+
+We define a base-type for all messages,
+for code that handles messages generically.
+All it has is the descriptor object.
+
+== Virtual Buffers ==
+One important helper type is the <type>ProtobufCBuffer</type>
+which allows you to abstract the target of serialization.  The only
+thing that a buffer has is an <function>append</function> method:
+{{{
+   struct _ProtobufCBuffer
+   {
+     void (*append)(ProtobufCBuffer     *buffer,
+                    size_t               len,
+                    const unsigned char *data);
+   }
+}}}
+`ProtobufCBuffer` subclasses are often defined on the stack.
+
+For example, to write to a <type>FILE</type> you could make:
+{{{
+   typedef struct
+   {
+     ProtobufCBuffer base;
+     FILE *fp;
+   } BufferAppendToFile
+   static void my_buffer_file_append (ProtobufCBuffer   *buffer,
+                               unsigned         len,
+                               const unsigned char *data)
+   {
+     BufferAppendToFile *file_buf = (BufferAppendToFile *) buffer;
+     fwrite (data, len, 1, file_buf->fp);  // XXX: no error handling!
+   }
+}}}
+
+<para>
+To use this new type of Buffer, you would do something like:
+{{{
+     ...
+     BufferAppendToFile tmp;
+     tmp.base.append = my_buffer_file_append;
+     tmp.fp = fp;
+     protobuf_c_message_pack_to_buffer (&message, &tmp);
+     ...
+}}}
+</para>
+<para>
+A commonly builtin subtype is the `BufferSimple`
+which is declared on the stack and uses a scratch buffer provided by the user
+for its initial allocation.  It does exponential resizing.
+To create a `BufferSimple`, use code like:
+{{{
+    unsigned char pad[128];
+    ProtobufCBufferSimple buf = PROTOBUF_C_BUFFER_SIMPLE_INIT (pad);
+    ProtobufCBuffer *buffer = (ProtobufCBuffer *) &simple;
+    protobuf_c_buffer_append (buffer, 6, (unsigned char *) "hi mom");
+}}}
+You can access the data as buf.len and buf.data. For example,
+{{{
+   assert (buf.len == 6);
+   assert (memcmp (buf.data, "hi mom", 6) == 0);
+}}}
+To finish up, use:
+{{{
+    PROTOBUF_C_BUFFER_SIMPLE_CLEAR (&buf);
+}}}
+
+== packing and unpacking messages ==
+
+To pack messages one first computes their packed size,
+then provide a buffer to pack into.  
+{{{
+    size_t protobuf_c_message_get_packed_size
+                                     (ProtobufCMessage *message);
+    void   protobuf_c_message_pack   (ProtobufCMessage *message,
+                                      unsigned char    *out);
+}}}
+
+Or you can use the "streaming" approach:
+{{{
+    void   protobuf_c_message_pack_to_buffer
+                                     (ProtobufCMessage *message,
+                                      ProtobufCBuffer  *buffer);
+}}}
+where `ProtobufCBuffer` is a base object with an append metod.
+See the Virtual Buffer section.
+
+
+To unpack messages, you should simple call
+{{{
+      ProtobufCMessage *
+         protobuf_c_message_unpack (const ProtobufCMessageDescriptor *,
+                                    ProtobufCAllocator  *allocator,
+				    size_t               len,
+				    const unsigned char *data);
+}}}
+If you pass NULL for `allocator`, then
+the default allocator will be used.
+
+You can cast the result to the type that matches
+the descriptor.
+
+The result of unpacking should be freed with protobuf_c_message_free().
+
