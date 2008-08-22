@@ -6,9 +6,9 @@ as well as functions that most users of the generated code
 will want.
 
 There are three main components:
-* the Descriptor structures
-* helper structures and objects
-* packing and unpacking code
+  * the Descriptor structures
+  * helper structures and objects
+  * packing and unpacking code
 
 == The Descriptor Structures ==
 For example, enums are described in terms of structures:
@@ -83,9 +83,9 @@ We defined typedefs for a few types
 which are used in .proto files but do not
 have obvious standard C equivalents:
 
-* a boolean type (`protobuf_c_boolean`)
-* a binary-data (bytes) type (`ProtobufCBinaryData`)
-* the various int types (`int32_t`, `uint32_t`, `int64_t`, `uint64_t`)
+  * a boolean type (`protobuf_c_boolean`)
+  * a binary-data (bytes) type (`ProtobufCBinaryData`)
+  * the various int types (`int32_t`, `uint32_t`, `int64_t`, `uint64_t`)
 
 are obtained by including <tt>inttypes.h</tt>
 
