@@ -1,0 +1,6 @@
+#summary protobuf-c wiki home page
+
+= Introduction =
+
+protobuf-c is a C binding for Google's Protocol Buffers (aka protobuf) library and code generator.
+
