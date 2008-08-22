@@ -47,8 +47,8 @@ To initialize a message for yourself,
 For example:
 {{{
     Foo__Bar__BazBah message;
-	memset (&message, 0, sizeof (message));
-	message.descriptor = &foo__bar__baz_bah__descriptor;
+    memset (&message, 0, sizeof (message));
+    message.descriptor = &foo__bar__baz_bah__descriptor;
 }}}
 The `descriptor` field is very important:
 that's what allows the library to act on the message generically.
