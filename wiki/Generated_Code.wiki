@@ -18,8 +18,7 @@ on the structures.
 }}}
   would generate a C type `Foo__Bar__BazBah`.</para>
 
-  * Functions and globals are all lowercase, with camel-case
-words separated by single underscores.  For example:
+  * Functions and globals are all lowercase, with camel-case words separated by single underscores.  For example:
 {{{
            Foo__Bar__BazBah *foo__bar__baz_bah__unpack
                                  (ProtobufCAllocator  *allocator,
@@ -37,10 +36,22 @@ These are declared in the .h files:
    extern const ProtobufCMessageDescriptor
                      foo__bar__baz_bah__descriptor;
 }}}
-The message structures all begin with `ProtobufCMessageDescriptor*`
-which is sufficient to allow them to be cast to `ProtobufCMessage`.
+
+For the definitions of the various `Descriptor` structures,
+see the [libprotobuf_c] page.
 
 = Message Methods =
+
+To initialize a message for yourself,
+`memset` it with 0 and set the `descriptor` member.
+For example:
+{{{
+    Foo__Bar__BazBah message;
+	memset (&message, 0, sizeof (message));
+	message.descriptor = &foo__bar__baz_bah__descriptor;
+}}}
+The `descriptor` field is very important:
+that's what allows the library to act on the message generically.
 
 We generate some functions for each message:
   * `unpack()`.  Unpack data for a particular message-format, using an optional allocator for the data:
@@ -76,3 +87,6 @@ We generate some functions for each message:
                         (const Foo__Bar__BazBah *message,
                          ProtobufCBuffer *buffer);
 }}}
+
+For the definitions of `ProtobufCBuffer` and `ProtobufCAllocator`,
+see the [libprotobuf_c] page.
