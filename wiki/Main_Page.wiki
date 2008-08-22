@@ -4,13 +4,13 @@
 
 protobuf-c is a C binding for Google's Protocol Buffers (aka protobuf) library and code generator.
 
-The overall [[design]] is similar to the C++ structure,
+The overall [Design design] is similar to the C++ structure,
 except we try to generate as little code as possible.
 
 To use the system, you should read more
-about [[Generated Code|the code we generate]].
+about [Generated_Code the code we generate].
 To understand how the generated code works,
-read about [[libprotobuf-c]].
+read about [libprotobuf-c].
  <section>
   <title>The protobuf-c Library</title>
 
