@@ -122,12 +122,12 @@ We will get generated code:
     struct _Convert_Service {
       void (*itoa) (Convert_Service *service,
                     const A *input,
-            B__Closure closure,
-            void *closure_data);
+                    B__Closure closure,
+                    void *closure_data);
       void (*atoi) (Convert_Service *service,
                     const B *input,
-            A__Closure closure,
-            void *closure_data);
+                    A__Closure closure,
+                    void *closure_data);
       void (*destroy) (Convert_Service *service);
     };
     ProtobufCService *convert__create_service (Foo__DirLookup_Service *service);
@@ -145,8 +145,8 @@ For example, here's how to implement a convert service that takes the default ra
       /* convert int to string (not really implemented) */
       static void radix_itoa (Convert_Service *service,
                               const A *input,
-                      B__Closure closure,
-                      void *closure_data)
+                              B__Closure closure,
+                              void *closure_data)
       {
         char buf[256];
         Convert_WithRadix *wr = (Convert_WithRadix *) service;
@@ -181,7 +181,7 @@ For example, here's how to implement a convert service that takes the default ra
         wr->radix = radix;
         return convert__create_service (&wr->base);
       }
-]]></programlisting>
+}}}
 
 Note that, unlike with messages, you must NOT cast
 from `Convert_Service` to `ProtobufCService`.
@@ -195,6 +195,6 @@ For example:
 {{{
        void convert__itoa (ProtobufCService *service,
                            const B *input,
-						   A__Closure closure,
-						   void *closure_data);
+                           A__Closure closure,
+                           void *closure_data);
 }}}
