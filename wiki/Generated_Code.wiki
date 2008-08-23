@@ -90,3 +90,111 @@ We generate some functions for each message:
 
 For the definitions of `ProtobufCBuffer` and `ProtobufCAllocator`,
 see the [libprotobuf_c] page.
+
+== Services ==
+Services are collections of methods each having an input and output type.
+Unlike messages where we generate a structure that corresponds
+to the actual message object, for services we generate
+a function that creates a `ProtobufCService`
+from a collection of user-defined methods.
+
+We also define simple functions that invoke each method of a service.
+These functions work if the service is created by
+the `create_service` generated function
+or if the service is instantiated by an RPC system.
+
+Suppose we have a .proto file:
+{{{
+     message A {
+       required uint32 val;
+     }
+     message B {
+       required string foo;
+     }
+     service Convert {
+       rpc Itoa (A) returns (B);
+       rpc Atoi (B) returns (A);
+     }
+}}}
+
+We will get generated code:
+{{{
+    struct _Convert_Service {
+      void (*itoa) (Convert_Service *service,
+                    const A *input,
+            B__Closure closure,
+            void *closure_data);
+      void (*atoi) (Convert_Service *service,
+                    const B *input,
+            A__Closure closure,
+            void *closure_data);
+      void (*destroy) (Convert_Service *service);
+    };
+    ProtobufCService *convert__create_service (Foo__DirLookup_Service *service);
+}}}
+
+Note that `create_service` takes ownership of `service`.
+For example, here's how to implement a convert service that takes the default radix to use:
+{{{
+      /* structure derived from Convert_Service. */
+      typedef struct {
+        Convert_Service base;   /* must be first member */
+        unsigned radix;
+      } Convert_WithRadix;
+
+      /* convert int to string (not really implemented) */
+      static void radix_itoa (Convert_Service *service,
+                              const A *input,
+                      B__Closure closure,
+                      void *closure_data)
+      {
+        char buf[256];
+        Convert_WithRadix *wr = (Convert_WithRadix *) service;
+        B rv;
+        print_int_with_radix (input->val, wr->radix, buf);
+        rv.descriptor = &b__descriptor;
+        rv.str = buf;
+        closure (&rv, closure_data);
+      }
+
+      /* convert string to int: use strtoul */
+      static void radix_atoi (Convert_Service *service,
+                              const B *input,
+                              A__Closure closure,
+                              void *closure_data)
+      {
+        Convert_WithRadix *wr = (Convert_WithRadix *) service;
+        A rv;
+        rv.val = strtoul (input->val, NULL, wr->radix);
+        rv.descriptor = &a__descriptor;
+        closure (&rv, closure_data);
+      }
+
+      /* create a new convert service by radix */
+      ProtobufCService *
+      create_convert_service_from_radix (unsigned radix)
+      {
+        Convert_WithRadix *wr = malloc (sizeof (Convert_WithRadix));
+        wr->base.itoa = radix_itoa;
+        wr->base.atoi = radix_atoi;
+        wr->base.destroy = (void(*)(Convert_Service *)) free;
+        wr->radix = radix;
+        return convert__create_service (&wr->base);
+      }
+]]></programlisting>
+
+Note that, unlike with messages, you must NOT cast
+from `Convert_Service` to `ProtobufCService`.
+
+Conversely, we generate functions to help you invoke service
+methods on generic `ProtobufCService` objects.
+These go through the `invoke()` of service
+and they work on both services created with create_service
+as well as factory-provided services like those provided by RPC systems.
+For example:
+{{{
+       void convert__itoa (ProtobufCService *service,
+                           const B *input,
+						   A__Closure closure,
+						   void *closure_data);
+}}}
