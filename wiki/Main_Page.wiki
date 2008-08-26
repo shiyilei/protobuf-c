@@ -22,8 +22,13 @@ about [Generated_Code the code we generate].
 To understand how the generated code works,
 read about [libprotobuf_c].
 
+= Status =
+  * The message serialization and deserialization code has been thoroughly tested.
+  * Still designing the Service stuff, so be careful about using it.
+  * Need to decide what to do about extensionn
+  * Need to decide whether to handle groups.
+
 = Caveats =
-As of now, this system has not had much testing.
 
 Some binary compatibility changes are expected until version 1.0 is released; so make sure you are linking to the protobuf-c that corresponds to the generated code you are using!
 
