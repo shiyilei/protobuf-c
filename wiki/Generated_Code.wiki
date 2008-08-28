@@ -16,14 +16,14 @@ on the structures.
                   int32 val;
                 }
 }}}
-  would generate a C type `Foo__Bar__BazBah`.</para>
+  would generate a C type `Foo__Bar__BazBah`.
 
   * Functions and globals are all lowercase, with camel-case words separated by single underscores.  For example:
 {{{
            Foo__Bar__BazBah *foo__bar__baz_bah__unpack
                                  (ProtobufCAllocator  *allocator,
                                   size_t length,
-                                  const unsigned char *data);
+                                  const uint8_t *data);
 }}}
   * Enums values are all uppercase.
   * Stuff we add to your symbol names will also be separated by a double-underscore.  For example, the unpack method above.
@@ -120,6 +120,8 @@ Suppose we have a .proto file:
 We will get generated code:
 {{{
     struct _Convert_Service {
+      ProtobufCService base;
+
       void (*itoa) (Convert_Service *service,
                     const A *input,
                     B__Closure closure,
@@ -130,8 +132,9 @@ We will get generated code:
                     void *closure_data);
       void (*destroy) (Convert_Service *service);
     };
-    ProtobufCService *convert__create_service (Foo__DirLookup_Service *service);
 }}}
+
+XXX: the following is totally wrong... but it is a nice example to exposit on, so we preserve it for editing convenience... be wary...
 
 Note that `create_service` takes ownership of `service`.
 For example, here's how to implement a convert service that takes the default radix to use:
@@ -175,16 +178,16 @@ For example, here's how to implement a convert service that takes the default ra
       create_convert_service_from_radix (unsigned radix)
       {
         Convert_WithRadix *wr = malloc (sizeof (Convert_WithRadix));
+        ... TODO: init function ...
         wr->base.itoa = radix_itoa;
         wr->base.atoi = radix_atoi;
         wr->base.destroy = (void(*)(Convert_Service *)) free;
         wr->radix = radix;
-        return convert__create_service (&wr->base);
+        return &wr->base;
       }
 }}}
 
-Note that, unlike with messages, you must NOT cast
-from `Convert_Service` to `ProtobufCService`.
+You can cast your service to a `ProtobufCService` object.
 
 Conversely, we generate functions to help you invoke service
 methods on generic `ProtobufCService` objects.
