@@ -13,7 +13,8 @@ on the structures.
 {{{
                 package foo.bar;
                 message BazBah {
-                  int32 val;
+                  required int32 val;
+                  optional string val2;
                 }
 }}}
   would generate a C type `Foo__Bar__BazBah`.
@@ -53,6 +54,11 @@ For example:
 The `descriptor` field is very important:
 that's what allows the library to act on the message generically.
 
+You might prefer to use the static initializer we provide.  It obeys many default values (but it doesn't handle default values that would require allocations).  To do that:
+{{{
+    Foo__Bar__BazBah message = FOO__BAR__BAZ_BAH__INIT;
+}}}
+
 We generate some functions for each message:
   * `unpack()`.  Unpack data for a particular message-format, using an optional allocator for the data:
 {{{
@@ -60,6 +66,19 @@ We generate some functions for each message:
      foo__bar__baz_bah__unpack  (ProtobufCAllocator *allocator,
                                  size_t length,
                                  const unsigned char *data);
+}}}
+    It's a good idea to not modify the unpacked message.  That's because we haven't decided exactly whether the message's fields are allocated separately or together.  The only thing you can really assume is that free_unpacked() will always to the right thing with the return value from unpack().
+
+    In practice, we will never be allocating memory for required and optional primitive types, so you CAN modify those values before calling free_unpacked().
+
+    To make other kinds of changes, make a copy and track your own allocations:
+{{{
+    Foo__Bar__BazBah *unpacked;
+    Foo__Bar__BazBah my_bazbah;
+    unpacked = foo__bar__baz_bah__unpack (NULL, len, data);
+    my_bazbah = *unpacked;
+    val2 = "my string";
+    ... when done with unpacked and my_bazbah, call free_unpacked()
 }}}
   * `free_unpacked()`.  Free a message that you obtained with the unpack method:
 {{{
