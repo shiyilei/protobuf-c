@@ -76,7 +76,7 @@ We generate some functions for each message:
     Foo__Bar__BazBah my_bazbah;
     unpacked = foo__bar__baz_bah__unpack (NULL, len, data);
     my_bazbah = *unpacked;
-    val2 = "my string";
+    my_bazbah.val2 = "my string";
     ... when done with unpacked and my_bazbah, call free_unpacked()
 }}}
   * `free_unpacked()`.  Free a message that you obtained with the unpack method:
