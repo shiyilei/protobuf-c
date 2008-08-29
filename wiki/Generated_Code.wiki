@@ -49,10 +49,16 @@ For example:
 {{{
     Foo__Bar__BazBah message;
     memset (&message, 0, sizeof (message));
-    message.descriptor = &foo__bar__baz_bah__descriptor;
+    message.base.descriptor = &foo__bar__baz_bah__descriptor;
 }}}
 The `descriptor` field is very important:
 that's what allows the library to act on the message generically.
+
+Another way to initialize a message is to use the generated static initializer macro:
+{{{
+    Foo__Bar__BazBah message = FOO__BAR__BAZ_BAH__INIT;
+}}}
+This will initialize any defaults that do not require allocation.
 
 You might prefer to use the static initializer we provide.  It obeys many default values (but it doesn't handle default values that would require allocations).  To do that:
 {{{
