@@ -101,9 +101,9 @@ for code that handles messages generically.
 All it has is the descriptor object.
 
 == Virtual Buffers ==
-One important helper type is the <type>ProtobufCBuffer</type>
+One important helper type is the `ProtobufCBuffer`
 which allows you to abstract the target of serialization.  The only
-thing that a buffer has is an <function>append</function> method:
+thing that a buffer has is an `append` method:
 {{{
    struct _ProtobufCBuffer
    {
@@ -114,34 +114,39 @@ thing that a buffer has is an <function>append</function> method:
 }}}
 `ProtobufCBuffer` subclasses are often defined on the stack.
 
-For example, to write to a <type>FILE</type> you could make:
+For example, to write to a `FILE*` (a file-pointer from stdio) you could make:
 {{{
    typedef struct
    {
      ProtobufCBuffer base;
      FILE *fp;
+     protobuf_c_boolean had_error;
    } BufferAppendToFile
    static void my_buffer_file_append (ProtobufCBuffer   *buffer,
-                               unsigned         len,
-                               const unsigned char *data)
+                                      unsigned         len,
+                                      const unsigned char *data)
    {
      BufferAppendToFile *file_buf = (BufferAppendToFile *) buffer;
-     fwrite (data, len, 1, file_buf->fp);  // XXX: no error handling!
+     if (!file_buf->had_error)
+       {
+         if (fwrite (data, len, 1, file_buf->fp) != 1)
+           file_buf->had_error = 1;
+       }
    }
 }}}
 
-<para>
 To use this new type of Buffer, you would do something like:
 {{{
      ...
      BufferAppendToFile tmp;
      tmp.base.append = my_buffer_file_append;
      tmp.fp = fp;
+     tmp.had_error = 0;
      protobuf_c_message_pack_to_buffer (&message, &tmp);
-     ...
+     if (tmp.had_error)
+       die ("error serializing to file");
 }}}
-</para>
-<para>
+
 A commonly builtin subtype is the `BufferSimple`
 which is declared on the stack and uses a scratch buffer provided by the user
 for its initial allocation.  It does exponential resizing.
