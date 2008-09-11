@@ -85,9 +85,7 @@ have obvious standard C equivalents:
 
   * a boolean type (`protobuf_c_boolean`)
   * a binary-data (bytes) type (`ProtobufCBinaryData`)
-  * the various int types (`int32_t`, `uint32_t`, `int64_t`, `uint64_t`)
-
-are obtained by including <tt>inttypes.h</tt>
+  * the various int types (`int32_t`, `uint32_t`, `int64_t`, `uint64_t`) are obtained by including `inttypes.h`
 
 We also define a simple allocator object, `ProtobufCAllocator`
 that let's you control how allocations are done.
@@ -200,4 +198,3 @@ You can cast the result to the type that matches
 the descriptor.
 
 The result of unpacking should be freed with protobuf_c_message_free().
-
