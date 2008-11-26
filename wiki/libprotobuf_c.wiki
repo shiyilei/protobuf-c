@@ -118,7 +118,7 @@ For example, to write to a `FILE*` (a file-pointer from stdio) you could make:
 {{{
    typedef struct
    {
-     ProtobufCBuffer base;
+     ProtobufCBuffer base;     /* 'base' must be first member of Buffer subclass */
      FILE *fp;
      protobuf_c_boolean had_error;
    } BufferAppendToFile
