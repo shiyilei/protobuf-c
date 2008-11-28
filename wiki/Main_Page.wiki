@@ -25,7 +25,7 @@ read about [libprotobuf_c].
 = Status =
   * The message serialization and deserialization code has been thoroughly tested.
   * Still designing the Service stuff, so be careful about using it.
-  * Need to decide what to do about extensionn
+  * Need to decide what to do about extensions
   * Need to decide whether to handle groups.
 
 = Caveats =
@@ -33,4 +33,4 @@ read about [libprotobuf_c].
 Some binary compatibility changes are expected until version 1.0 is released; so make sure you are linking to the protobuf-c that corresponds to the generated code you are using!
 
 = TODO items =
-Currently, these are in a file called `TODO` in the source package.
+Currently, these are in a file called [http://code.google.com/p/protobuf-c/source/browse/trunk/TODO TODO] in the source package.
