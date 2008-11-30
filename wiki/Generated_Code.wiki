@@ -66,6 +66,7 @@ You might prefer to use the static initializer we provide.  It obeys many defaul
 }}}
 
 We generate some functions for each message:
+  * `init()`.  Equivalent to assigning the `__INIT` macro to its argument.  It's useful in some contexts, like initializing a block of memory allocated by the user.
   * `unpack()`.  Unpack data for a particular message-format, using an optional allocator for the data:
 {{{
      Foo__Bar__BazBah *
@@ -114,6 +115,8 @@ We generate some functions for each message:
 
 For the definitions of `ProtobufCBuffer` and `ProtobufCAllocator`,
 see the [libprotobuf_c] page.
+
+Finally, note that [Default_Values default-value handling] is a little subtle- it'll probably mostly work as you expect (it's mostly modeled after the c++ implementation), but it's got a quirk regarding optional string values.  You 
 
 == Services ==
 Services are collections of methods each having an input and output type.
