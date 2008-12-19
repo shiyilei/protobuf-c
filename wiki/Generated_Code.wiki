@@ -44,25 +44,18 @@ see the [libprotobuf_c] page.
 = Message Methods =
 
 To initialize a message for yourself,
-`memset` it with 0 and set the `descriptor` member.
+use the uppercased `__INIT` macro:
 For example:
 {{{
+    Foo__Bar__BazBah message = FOO__BAR__BAZ_BAH__INIT;
+}}}
+This will properly handle [[default values]].
+
+Sometimes, a function that initializes a message of a give type is useful.
+For that purpose, we provide an `__init()` function
+{{{
     Foo__Bar__BazBah message;
-    memset (&message, 0, sizeof (message));
-    message.base.descriptor = &foo__bar__baz_bah__descriptor;
-}}}
-The `descriptor` field is very important:
-that's what allows the library to act on the message generically.
-
-Another way to initialize a message is to use the generated static initializer macro:
-{{{
-    Foo__Bar__BazBah message = FOO__BAR__BAZ_BAH__INIT;
-}}}
-This will initialize any defaults that do not require allocation.
-
-You might prefer to use the static initializer we provide.  It obeys many default values (but it doesn't handle default values that would require allocations).  To do that:
-{{{
-    Foo__Bar__BazBah message = FOO__BAR__BAZ_BAH__INIT;
+    foo__bar__baz_bah__init (&message);
 }}}
 
 We generate some functions for each message:
