@@ -13,8 +13,8 @@ on the structures.
 {{{
                 package foo.bar;
                 message BazBah {
-                  required int32 val;
-                  optional string val2;
+                  required int32 val = 1;
+                  optional string val2 = 2;
                 }
 }}}
   would generate a C type `Foo__Bar__BazBah`.
