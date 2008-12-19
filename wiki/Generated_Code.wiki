@@ -49,7 +49,7 @@ For example:
 {{{
     Foo__Bar__BazBah message = FOO__BAR__BAZ_BAH__INIT;
 }}}
-This will properly handle [[default values]].
+This will properly handle [[Default_values default values]].
 
 Sometimes, a function that initializes a message of a give type is useful.
 For that purpose, we provide an `__init()` function
