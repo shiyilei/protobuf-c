@@ -131,10 +131,10 @@ or if the service is instantiated by an RPC system.
 Suppose we have a .proto file:
 {{{
      message A {
-       required uint32 val;
+       required uint32 val = 1;
      }
      message B {
-       required string foo;
+       required string foo = 1;
      }
      service Convert {
        rpc Itoa (A) returns (B);
