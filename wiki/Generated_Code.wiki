@@ -109,8 +109,13 @@ We generate some functions for each message:
 For the definitions of `ProtobufCBuffer` and `ProtobufCAllocator`,
 see the [libprotobuf_c] page.
 
-Finally, note that [Default_Values default-value handling] is a little subtle- it'll probably mostly work as you expect (it's mostly modeled after the c++ implementation), but it's got a quirk regarding optional string values.  You 
-
+Finally, note that [Default_Values default-value handling] is a little subtle- it'll probably mostly work as you expect (it's mostly modeled after the c++ implementation), but it's got a quirk regarding optional string values.  There is no "has_field" for a string field.  To determine if a string-field is set to the default value, use something like:
+{{{
+#define my_struct_has_field(my_struct) \
+   (my_struct.field != NULL            \
+ && my_struct.field != my_struct__field__default_value)
+}}}
+(see the "default-value handling" link for the details).
 == Services ==
 Services are collections of methods each having an input and output type.
 Unlike messages where we generate a structure that corresponds
