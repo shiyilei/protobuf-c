@@ -18,7 +18,7 @@ Strings and bytes have their default values stored as globals; occasionally you 
       required bytes b  = 2 [default = "\0 char"]; }
 }}}
 
-will yield some globals in the C code:
+will yield some exposed globals in the generated C code (from the generated header file):
 {{{
    extern char foo__a__default_value[];
    extern uint8_t foo_b__default_value_data[]
