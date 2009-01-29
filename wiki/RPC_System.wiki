@@ -33,7 +33,7 @@ Our RPC system adds some more ideas:
   * the *server* is the passive end of the tcp or unix-domain connection.  It has an underlying ProtobufCService that it will call at the behest of the clients.  As usual, many clients may be connected to a single server.
   * the *dispatch* is a way of handling multiple connections from a single thread.  We use it for the client and the server.  The idea is the same as a "main-loop": we accept requests for which file-descriptors to watch for which events.  We chose to call it a "dispatch" because it is designed to be embedded in the main loops of applications, although it can also run standalone.
 
-= API =
+= Programmer's Reference (API Documentation) =
 The basic gist is:
 {{{
    void     create_server (Port, Service);
@@ -47,15 +47,14 @@ Of course, as usual, C naming conventions are never that short.  Here's the
 real functions:
 
 {{{
-ProtobufCService *protobuf_c_rpc_client_new (ProtobufC_RPC_AddressType type,
-                                             const char               *name,
-                                             const ProtobufCServiceDescriptor *descriptor,
-                                             ProtobufCDispatch       *dispatch);
-ProtobufC_RPC_Server *
-     protobuf_c_rpc_server_new        (ProtobufC_RPC_AddressType type,
-                                       const char               *name,
-                                       ProtobufCService         *service,
-                                       ProtobufCDispatch       *dispatch);
+ProtobufCService     *protobuf_c_rpc_client_new (ProtobufC_RPC_AddressType  type,
+                                                 const char                *name,
+                                                 const ProtobufCServiceDescriptor *descriptor,
+                                                 ProtobufCDispatch         *dispatch);
+ProtobufC_RPC_Server *protobuf_c_rpc_server_new (ProtobufC_RPC_AddressType  type,
+                                                 const char                *name,
+                                                 ProtobufCService          *service,
+                                                 ProtobufCDispatch         *dispatch);
 }}}
 We return a ProtobufC_RPC_Server object to allow for additional configuration
 and monitoring of the server.
