@@ -44,12 +44,12 @@ The server eventually issues a similar 16 byte response:
 = Programmer's Reference (API Documentation) =
 The basic gist is:
 {{{
-   void     create_server (Port, Service);
    Service *create_client (Location, ServiceDescriptor)
+   void     create_server (Port, Service);
 }}}
 So you see:
-  * the server binds to the Port and answers requests using the Service.
   * the client connects to the Location and using the message formats given by the ServiceDescriptor.
+  * the server binds to the Port and answers requests using the Service.
 
 Of course, as usual, C naming conventions are never that short.  Here's the
 real functions:
