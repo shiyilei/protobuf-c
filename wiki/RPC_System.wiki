@@ -12,7 +12,7 @@ Protocol buffers provides a mechanism for defining a "service", which is intende
 
 protobuf-c, by constrast _does_ provide an implementation.  We will first describe the protocol, and then give an API for using it.
 
-= Operational Summary of the RPC Implementation ==
+= Components of the protobuf-c RPC Implementation ==
 Remember that a *service* in protocol-buffers are an array of named methods, each of which takes a single message input and provides a single message output; the input and output types are specified in the .proto file.
 
 Our RPC system adds some more ideas:
