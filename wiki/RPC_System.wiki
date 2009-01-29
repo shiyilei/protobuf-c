@@ -34,6 +34,33 @@ Our RPC system adds some more ideas:
   * the *dispatch* is a way of handling multiple connections from a single thread.  We use it for the client and the server.  The idea is the same as a "main-loop": we accept requests for which file-descriptors to watch for which events.  We chose to call it a "dispatch" because it is designed to be embedded in the main loops of applications, although it can also run standalone.
 
 = API =
+The basic gist is:
+{{{
+   void     create_server (Port, Service);
+   Service *create_client (Location, ServiceDescriptor)
+}}}
+So you see:
+  * the server binds to the Port and answers requests using the Service.
+  * the client connects to the Location and using the message formats given by the ServiceDescriptor.
+
+Of course, as usual, C naming conventions are never that short.  Here's the
+real functions:
+
+{{{
+ProtobufCService *protobuf_c_rpc_client_new (ProtobufC_RPC_AddressType type,
+                                             const char               *name,
+                                             const ProtobufCServiceDescriptor *descriptor,
+                                             ProtobufCDispatch       *dispatch);
+ProtobufC_RPC_Server *
+     protobuf_c_rpc_server_new        (ProtobufC_RPC_AddressType type,
+                                       const char               *name,
+                                       ProtobufCService         *service,
+                                       ProtobufCDispatch       *dispatch);
+}}}
+We return a ProtobufC_RPC_Server object to allow for additional configuration
+and monitoring of the server.
+
+== API Details: Constructing a Client ==
 {{{
 typedef enum
 {
@@ -72,14 +99,6 @@ ProtobufC_RPC_Client_ConnectStatus
 protobuf_c_rpc_client_connect (ProtobufC_RPC_Client *client);
 }}}
 
-{{{
-ProtobufC_RPC_Server *
-     protobuf_c_rpc_server_new        (ProtobufC_RPC_AddressType type,
-                                       const char               *name,
-                                       ProtobufCService         *service,
-                                       ProtobufCDispatch       *dispatch);
-}}}
-
 == API Details:  Configuring the Client ==
 {{{
 void protobuf_c_rpc_client_set_name_resolver (ProtobufC_RPC_Client *client,
@@ -114,6 +133,16 @@ protobuf_c_boolean protobuf_c_rpc_client_is_connected (ProtobufC_RPC_Client *cli
 }}}
 Return TRUE if the client is connected to the server.  If the client is not connected,
 all requests to the client will fail immediately.
+
+== API Details: Constructing a Server ==
+
+{{{
+ProtobufC_RPC_Server *
+     protobuf_c_rpc_server_new        (ProtobufC_RPC_AddressType type,
+                                       const char               *name,
+                                       ProtobufCService         *service,
+                                       ProtobufCDispatch       *dispatch);
+}}}
 
 == API Details:  Configuring the Server ==
 {{{
