@@ -11,7 +11,7 @@ Protocol buffers provides a mechanism for defining a "service", which is intende
 protobuf-c, by constrast _does_ provide an implementation.  We will first describe the protocol, and then give an API for using it.
 
 = Operational Summary of the RPC Implementation ==
-Remember that a *service* in protocol-buffers as an array of named methods, each of which takes a single message input and provides a single message output; the input and output types are specified in the .proto file.
+Remember that a *service* in protocol-buffers are an array of named methods, each of which takes a single message input and provides a single message output; the input and output types are specified in the .proto file.
 
 Our RPC system adds some more ideas:
   * the *client* is the active end of the tcp or unix-domain socket connection.  Once connected, it can invoke functions on the server.  The client object we provide implements automatic reconnection if the server is down.
