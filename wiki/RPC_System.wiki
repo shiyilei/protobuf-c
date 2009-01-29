@@ -44,6 +44,10 @@ The server eventually issues a similar 16 byte response:
   * request id (same as for request)
 
 = Programmer's Reference (API Documentation) =
+
+Please see the [RPC_API] page for the complete story.  However, if you understand the rest of the protobuf-c api then this description should be adequate for a cursory use.
+See the [RPC_Example] for complete client and server example code.
+
 The basic gist is:
 {{{
    Service *create_client (Location, ServiceDescriptor)
@@ -68,5 +72,3 @@ ProtobufC_RPC_Server *protobuf_c_rpc_server_new (ProtobufC_RPC_AddressType  type
 }}}
 We return a ProtobufC_RPC_Server object to allow for additional configuration
 and monitoring of the server.
-
-The [RPC_API] page has more details.
