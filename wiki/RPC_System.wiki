@@ -1,10 +1,4 @@
 ﻿#summary The RPC system provided by protobuf-c
-= TODO =
-things to do before release:
-  * implement protobuf_c_rpc_client_connect()
-  * example
-  * more exhaustive test code
-
 = Introduction =
 
 Protocol buffers provides a mechanism for defining a "service", which is intended to form the basis for an "remote-procedure call" (RPC) system.  They do not actually provide any implementation or protocol suggestions for doing so, both in the name of generality, and because google's internal protocols are tied to their architecture too strongly [cite?].
@@ -71,3 +65,7 @@ ProtobufC_RPC_Server *protobuf_c_rpc_server_new (ProtobufC_RPC_AddressType  type
 }}}
 We return a ProtobufC_RPC_Server object to allow for additional configuration
 and monitoring of the server.
+
+= TODO =
+  * implement protobuf_c_rpc_client_connect()
+  * more exhaustive test code
