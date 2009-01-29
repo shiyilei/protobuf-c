@@ -1,7 +1,8 @@
 ﻿#summary The RPC system provided by protobuf-c
 = TODO =
 things to do before release:
-  * flag to allow client to block for connect
+  * function (prototyped) to allow client to block for connect
+  * example
 
 = Introduction =
 
@@ -9,8 +10,23 @@ Protocol buffers provides a mechanism for defining a "service", which is intende
 
 protobuf-c, by constrast _does_ provide an implementation.  We will first describe the protocol, and then give an API for using it.
 
-= The Protocol =
-The protocol is designed to facilitate pipelining of requests.
+= Operational Summary of the RPC Implementation ==
+Remember that a *service* in protocol-buffers as an array of named methods, each of which takes a single message input and provides a single message output; the input and output types are specified in the .proto file.
+
+Our RPC system adds some more ideas:
+  * the *client* is the active end of the tcp or unix-domain socket connection.  Once connected, it can invoke functions on the server.  The client object we provide implements automatic reconnection if the server is down.
+  * the *server* is the passive end of the tcp or unix-domain connection.  It has an underlying ProtobufCService that it will call at the behest of the clients.  As usual, many clients may be connected to a single server.
+  * the *dispatch* is a way of handling multiple connections from a single thread.  We use it for the client and the server.  The idea is the same as a "main-loop": we accept requests for which file-descriptors to watch for which events.  We chose to call it a "dispatch" because it is designed to be embedded in the main loops of applications, although it can also run standalone.
+
+= The Encapsulation Protocol =
+We here describe the way to pass messages across the socket; the translation of the messages themselves into bytes is done by core protobuf, but it leaves several unspecified parts:
+  * how should the client specify which method to invoke?
+  * how should the client and server specify the protobuf-encoded message-length? (It cannot be determined by examining the bytes.)
+  * how should failures be passed back to the client?
+  * if the protocol allows pipelining, how should we support out-of-order responses? (i.e. how does the client match the server's response to its request?)
+
+Our encapsulation protocol is designed to facilitate pipelining of requests.  It can be much more efficient to pipeline many small requests.
+
 The client issues a 12 byte header followed by the protobuf-encoded message payload:
   * method index (encoded as a 4-byte little-endian number)
   * message length: the length of the protobuf-encoded payload (encoded 4-byte little-endian)
@@ -24,14 +40,6 @@ The server eventually issues a similar 16 byte response:
   * method index (same as for request)
   * message length (same as for request)
   * request id (same as for request)
-
-= Operational Summary of the RPC Implementation ==
-Remember that a *service* in protocol-buffers as an array of named methods, each of which takes a single message input and provides a single message output; the input and output types are specified in the .proto file.
-
-Our RPC system adds some more ideas:
-  * the *client* is the active end of the tcp or unix-domain socket connection.  Once connected, it can invoke functions on the server.  The client object we provide implements automatic reconnection if the server is down.
-  * the *server* is the passive end of the tcp or unix-domain connection.  It has an underlying ProtobufCService that it will call at the behest of the clients.  As usual, many clients may be connected to a single server.
-  * the *dispatch* is a way of handling multiple connections from a single thread.  We use it for the client and the server.  The idea is the same as a "main-loop": we accept requests for which file-descriptors to watch for which events.  We chose to call it a "dispatch" because it is designed to be embedded in the main loops of applications, although it can also run standalone.
 
 = Programmer's Reference (API Documentation) =
 The basic gist is:
@@ -74,10 +82,8 @@ ProtobufCService *protobuf_c_rpc_client_new (ProtobufC_RPC_AddressType type,
 }}}
 Create a new connection to a protobuf-c-rpc server.  _type_ and _name_ 
 give the location of the server.
-  * if _type_ is PROTOBUF_C_RPC_ADDRESS_LOCAL then the _name_ is a path 
-    in the local filesystem
-  * if _type_ is PROTOBUF_C_RPC_ADDRESS_TCP then the _name_ is a host:port
-    combination.
+  * if _type_ is PROTOBUF_C_RPC_ADDRESS_LOCAL then the _name_ is a path in the local filesystem
+  * if _type_ is PROTOBUF_C_RPC_ADDRESS_TCP then the _name_ is a host:port combination.
 
 The _descriptor_ gives the service format data (e.g. which methods exist and their types).
 
