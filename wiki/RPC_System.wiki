@@ -2,7 +2,9 @@
 = TODO =
 things to do before release:
   * function (prototyped) to allow client to block for connect
+  * implement protobuf_c_rpc_client_connect()
   * example
+  * more extensive test code
 
 = Introduction =
 
