@@ -69,7 +69,7 @@ ProtobufC_RPC_Server *protobuf_c_rpc_server_new (ProtobufC_RPC_AddressType  type
 We return a ProtobufC_RPC_Server object to allow for additional configuration
 and monitoring of the server.
 
-The Protobuf_C_RPC_API page has more details.
+The ProtobufCRPCAPI page has more details.
 
 == API Details: Constructing a Client ==
 {{{
