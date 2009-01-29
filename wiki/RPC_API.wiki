@@ -23,7 +23,7 @@ ProtobufC_RPC_Server *protobuf_c_rpc_server_new (ProtobufC_RPC_AddressType  type
                                                  ProtobufCService          *service,
                                                  ProtobufCDispatch         *dispatch);
 }}}
-We return a ProtobufC_RPC_Server object to allow for additional configuration
+We return a `ProtobufC_RPC_Server` object to allow for additional configuration
 and monitoring of the server.
 
 
