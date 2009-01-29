@@ -27,7 +27,7 @@ We return a `ProtobufC_RPC_Server` object to allow for additional configuration
 and monitoring of the server.
 
 
-== API Details: Constructing a Client ==
+= Constructing a Client =
 {{{
 typedef enum
 {
@@ -42,13 +42,13 @@ ProtobufCService *protobuf_c_rpc_client_new (ProtobufC_RPC_AddressType type,
 }}}
 Create a new connection to a protobuf-c-rpc server.  _type_ and _name_ 
 give the location of the server.
-  * if _type_ is PROTOBUF_C_RPC_ADDRESS_LOCAL then the _name_ is a path in the local filesystem
-  * if _type_ is PROTOBUF_C_RPC_ADDRESS_TCP then the _name_ is a host:port combination.
+  * if _type_ is `PROTOBUF_C_RPC_ADDRESS_LOCAL` then the _name_ is a path in the local filesystem
+  * if _type_ is `PROTOBUF_C_RPC_ADDRESS_TCP` then the _name_ is a host:port combination.
 
 The _descriptor_ gives the service format data (e.g. which methods exist and their types).
 
 The _dispatch_ is the main-loop with which 
-to register file-descriptors and timeouts.  If given NULL if
+to register file-descriptors and timeouts.  If given `NULL` if
 will use the default dispatch.
 
 The client does not block until it is connected.
@@ -64,7 +64,7 @@ ProtobufC_RPC_Client_ConnectStatus
 protobuf_c_rpc_client_connect (ProtobufC_RPC_Client *client);
 }}}
 
-== API Details:  Configuring the Client ==
+= Configuring the Client =
 {{{
 void protobuf_c_rpc_client_set_name_resolver (ProtobufC_RPC_Client *client,
                                               ProtobufC_NameLookup_Func resolver);
@@ -96,10 +96,10 @@ reconnecting rather frequently.
 {{{
 protobuf_c_boolean protobuf_c_rpc_client_is_connected (ProtobufC_RPC_Client *client);
 }}}
-Return TRUE if the client is connected to the server.  If the client is not connected,
+Return `TRUE` if the client is connected to the server.  If the client is not connected,
 all requests to the client will fail immediately.
 
-== API Details: Constructing a Server ==
+= API Details: Constructing a Server =
 
 {{{
 ProtobufC_RPC_Server *
@@ -109,7 +109,7 @@ ProtobufC_RPC_Server *
                                        ProtobufCDispatch       *dispatch);
 }}}
 
-== API Details:  Configuring the Server ==
+= API Details:  Configuring the Server =
 {{{
 void protobuf_c_rpc_server_disable_autotimeout(ProtobufC_RPC_Server *server);
 void protobuf_c_rpc_server_set_autotimeout (ProtobufC_RPC_Server *server,
@@ -124,7 +124,7 @@ void protobuf_c_rpc_server_set_error_handler (ProtobufC_RPC_Server *server,
 }}}
 Register a function to call if an error occurs.
 
-== API Details:  Cleaning up ==
+= Cleaning up =
 {{{
 void protobuf_c_service_destroy       (ProtobufCService         *client);
 ProtobufCService *
@@ -132,4 +132,17 @@ ProtobufCService *
                                        protobuf_c_boolean        free_underlying_service);
 }}}
 
-== API Details: the Dispatch ==
+= ProtobufCDispatch =
+There are two distinct users of this code:
+  * users of the main-loop: those who wish to register watches on file-descriptors, timeouts and idle functions.
+  * those embedding the dispatch into an existing application's main-loop: those who have an existing main-loop or other infrastructure that must now run a protobuf-c rpc server or client.  See [RPC_Embedding] where we hope to provide useful examples.
+
+= Dispatch User API =
+Here we describe the functions to handle file-descriptor events, timeouts and idle functions.
+
+{{{
+ ... suck in from protobuf-c-dispatch.h
+}}}
+
+== Dispatch Embedding API ==
+Here we describe succinctly the functions that will be used by developers embedding a `ProtobufCDispatch` into an existing main-loop infrastructure.
