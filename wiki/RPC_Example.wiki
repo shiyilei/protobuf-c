@@ -467,6 +467,34 @@ int main(int argc, char**argv)
 }
 }}}
 
+== Running the code ==
+In one shell (or backgrounded), run:
+{{{
+  % ./example-server --unix=socket --database=example.database
+}}}
+
+And in another shell (or in the foreground), run:
+{{{
+  % ./example-client --unix=socket
+}}}
+
+The client will greet you with a prompt:
+{{{
+>>
+}}}
+
+Type `dave`:
+{{{
+>> dave
+}}}
+
+And it will respond, (as given in the `example.database` file):
+{{{
+dave
+ 666
+ who@cares.com
+ MOBILE (123)123-1234
+}}}
 
 == Where is this code? ==
 
