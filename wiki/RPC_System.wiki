@@ -66,6 +66,9 @@ ProtobufC_RPC_Server *protobuf_c_rpc_server_new (ProtobufC_RPC_AddressType  type
 We return a ProtobufC_RPC_Server object to allow for additional configuration
 and monitoring of the server.
 
+= RPC Example =
+Sometimes an [RPC_Example example] is much easier to follow than a dry description.
+
 = TODO =
   * implement protobuf_c_rpc_client_connect()
   * more exhaustive test code
