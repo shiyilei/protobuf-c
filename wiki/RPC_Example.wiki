@@ -1,6 +1,6 @@
 ﻿#summary RPC Example
 
-= A Simple Client and Server
+= A Simple Client and Server =
 
 == The `.proto` file ==
 
