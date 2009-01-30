@@ -1,0 +1,15 @@
+#summary RPC Example
+
+= A Simple Client and Server
+
+== The `.proto` file ==
+
+== The server code ==
+
+== The client code ==
+
+== Where is this code? ==
+
+In the distribution as `src/test/test.proto`, `src/test/example-server.c` and `src/test/example-client.c`.
+
+todo: link to subversion
