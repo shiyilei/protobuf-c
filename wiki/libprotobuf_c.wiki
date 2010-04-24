@@ -256,7 +256,7 @@ where `ProtobufCBuffer` is a base object with an append metod.
 See the Virtual Buffer section.
 
 
-To unpack messages, you should simple call
+To unpack messages, you should simply call
 {{{
       ProtobufCMessage *
          protobuf_c_message_unpack (const ProtobufCMessageDescriptor *,
@@ -270,4 +270,4 @@ the default allocator will be used.
 You can cast the result to the type that matches
 the descriptor.
 
-The result of unpacking should be freed with protobuf_c_message_free().
+The result of unpacking should be freed with protobuf_c_message_free_unpacked().
