@@ -182,7 +182,7 @@ thing that a buffer has is an `append` method:
 }}}
 `ProtobufCBuffer` subclasses are often defined on the stack.
 
-For example, to write to a `FILE*` (a file-pointer from stdio) you could make:
+For example, to write to a `FILE*` (a file-pointer from `stdio.h`) you could make:
 {{{
    typedef struct
    {
@@ -215,7 +215,7 @@ To use this new type of Buffer, you would do something like:
        die ("error serializing to file");
 }}}
 
-A commonly builtin subtype is the `BufferSimple`
+A commonly-used builtin subtype is the `BufferSimple`
 which is declared on the stack and uses a scratch buffer provided by the user
 for its initial allocation.  It does exponential resizing.
 To create a `BufferSimple`, use code like:
@@ -237,7 +237,7 @@ To finish up, use:
 
 == packing and unpacking messages ==
 
-To pack messages one first computes their packed size,
+To pack messages you first compute their packed size,
 then provide a buffer to pack into.  
 {{{
     size_t protobuf_c_message_get_packed_size
