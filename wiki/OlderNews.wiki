@@ -36,11 +36,3 @@ Bugs fixed:
 The new features of 0.6 are:
   * [Default_Values default values] now set correctly
   * For each message type, we generate a `message__init(Message *)` function.  This function never allocates memory, and is equivalent to using the `MESSAGE__INIT` macro.
-
-= Documentation =
-[Main_Page See our wiki for documentation].
-
-= Status =
-  * The message serialization and deserialization code has been thoroughly tested.
-  * Still designing the Service stuff, so be careful about using it.
-  * Need to decide what to do about extensions
