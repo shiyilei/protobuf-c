@@ -9,7 +9,7 @@ This is a DRAFT (if that) of the extension API.
   protobuf_c_boolean protobuf_c_unpack_int32_extension (ProtobufC_Message *msg,
                                                         ProtobufC_Field   *ext_field,
                                                         int32_t           *output);
-  protobuf_c_boolean protobuf_c_unpack_int32_extension (ProtobufC_Message *msg,
+  protobuf_c_boolean protobuf_c_unpack_message_extension (ProtobufC_Message *msg,
                                                         ProtobufC_Field   *ext_field,
                                                         ProtobufC_Message **output,
                                                         ProtobufC_Allocator *allocator);
