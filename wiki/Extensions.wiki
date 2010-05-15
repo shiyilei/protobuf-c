@@ -7,11 +7,16 @@ This is a DRAFT (if that) of the extension API.
 = libprotobuf-c functions =
 {{{
   protobuf_c_boolean protobuf_c_peek_int32_extension (ProtobufC_Message *msg,
-                                                      int32_t          *output);
+                                                      ProtobufC_Field *ext_field,
+                                                      int32_t           *output);
 }}}
 etc
 
 = Generated code =
+{{{
+   extern ProtobufC_Field ExtensionName_MessageName_fieldname;
+}}}
 
 = Questions =
-can extensions support "repeated"?
+* can extensions support "repeated"?
+* setters?
