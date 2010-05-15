@@ -1,5 +1,7 @@
 #summary PROPOSAL: how extensions should work!
 
+= THIS IS AN UNIMPLEMENTED PROPOSAL =
+
 = Introduction =
 
 This is a DRAFT (if that) of the extension API.
