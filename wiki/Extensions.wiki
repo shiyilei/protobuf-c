@@ -5,8 +5,10 @@
 This is a DRAFT (if that) of the extension API.
 
 = libprotobuf-c functions =
+{{{
   protobuf_c_boolean protobuf_c_peek_int32_extension (ProtobufC_Message *msg,
-                                                      int32_t *output);
+                                                      int32_t          *output);
+}}}
 etc
 
 = Generated code =
