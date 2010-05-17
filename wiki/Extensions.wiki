@@ -6,23 +6,22 @@
 
 This is a DRAFT (if that) of the extension API.
 
+The (new as of May 20) plan is to make a MessageDescriptor for every namespace/message combination that has extensions.  The lexically-containing message name (if any) may need to be shoved somewhere.  We may add an "extends" field to MessageDescriptor to clarify this purpose.
+
 = libprotobuf-c functions =
 {{{
-  protobuf_c_boolean protobuf_c_unpack_int32_extension (ProtobufC_Message *msg,
-                                                        ProtobufC_Field   *ext_field,
-                                                        int32_t           *output);
-  protobuf_c_boolean protobuf_c_unpack_message_extension (ProtobufC_Message *msg,
-                                                        ProtobufC_Field   *ext_field,
-                                                        ProtobufC_Message **output,
+  ProtobufCMessage * protobuf_c_extension_unpack (ProtobufC_Message *msg,
+                                                        ProtobufC_MessageDescriptor   *extension,
                                                         ProtobufC_Allocator *allocator);
 }}}
-etc
+If any extension is tagged as "required", its absence will cause the unpacking to fail.  You will also get failures on type errors.
+
+For the packing side, you can pack the extensions (using get_packed_size/pack or pack_buffer) and concatenate as binary data.  Later, we may add support to generate "UnknownFields" so that you can incorporate them into a message - it's not clear that that's useful.
 
 = Generated code =
 {{{
-   extern ProtobufC_Field ExtensionName_MessageName_fieldname;
+   extern ProtobufC_MessageDescriptor extension_namespace___extends___full_message_name;
+   ExtensionNamespace___extends___FullMessageName *extension_namespace___extends___full_message_name__unpack(FullMessageName *orig_message,
+                                                        ProtobufC_Allocator *allocator);
+                
 }}}
-
-= Questions =
-   * can extensions support "repeated"?
-   * setters?
