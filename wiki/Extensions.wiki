@@ -6,7 +6,7 @@
 
 This is a DRAFT (if that) of the extension API.
 
-The (new as of May 20) plan is to make a MessageDescriptor for every namespace/message combination that has extensions.  The lexically-containing message name (if any) may need to be shoved somewhere.  We may add an "extends" field to MessageDescriptor to clarify this purpose.
+The (new as of May 16) plan is to make a MessageDescriptor for every namespace/message combination that has extensions.  The lexically-containing message name (if any) may need to be shoved somewhere.  We may add an "extends" field to MessageDescriptor to clarify this purpose.
 
 = libprotobuf-c functions =
 {{{
