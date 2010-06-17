@@ -1,5 +1,11 @@
 #summary PROPOSAL: how extensions should work!
 
+= Current Suggestion =
+Extensions are not implemented.  I recommend merely mechanically adding the extension values to the message descriptor before running protoc-c.  It works well, and isn't very hard.
+
+= Use Cases =
+VOLUNTEERS? uh, yeah, please write some example use-cases if you are interested
+
 = THIS IS AN UNIMPLEMENTED PROPOSAL =
 
 = Introduction =
