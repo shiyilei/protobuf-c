@@ -1,0 +1,53 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Examples of using protobuf-c.
+
+protobuf-c works by taking a .proto file (which is defined by google's Protocol Buffers library), and generating .h and .c files you can use from C.
+
+= Simple complete example =
+
+
+Here is a simple file, `amessage.proto` file:
+{{{
+   message AMessage
+   {
+      required int a;
+      optional int b;
+   }
+}}}
+
+You can generate .h and .c files from the command-line:
+{{{
+   protoc-c --output_dir=. FIXME
+}}}
+
+You might write a program to pack a message:
+{{{
+  #include "amessage.pb-c.h"
+  #include <stdio.h>
+  int main(int argc, char **argv)
+  {
+    AMessage msg = A_MESSAGE__INIT;  
+   void *buf;
+   unsigned len;
+   if (argc < 2 || argc > 3)
+     {
+        fprintf(stderr,"usage: pack a [b]\n");
+        return 1;
+     }
+    msg.a = atoi (argv[1]);
+    if (argc == 3) { msg.has_b = 1; msg.b = atoi(argv[2]); }
+    len = a_message__get_packed_size (&msg);
+    buf = malloc (len);
+    a_message__pack (&msg, buf);
+    fwrite (buf, len, 1, stdout);
+    return 0;
+  } 
+}}}
+I left most error handling out for brevity.  Notice:
+  * the use of the __INIT macro to construct the message
+  * the "has_b" member that corresponds to the optional `b` field -- required fields do not have a has_ member.
+  * __get_packed_size returns the length of the packed data.
+  * __pack serializes the message.
