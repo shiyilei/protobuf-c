@@ -47,7 +47,19 @@ You might write a program to pack a message:
   } 
 }}}
 I left most error handling out for brevity.  Notice:
-  * the use of the __INIT macro to construct the message
+  * the use of the A_MESSAGE__INIT macro to construct the message
   * the "has_b" member that corresponds to the optional `b` field -- required fields do not have a has_ member.
-  * __get_packed_size returns the length of the packed data.
-  * __pack serializes the message.
+  * a_message__get_packed_size returns the length of the packed data.
+  * a_message__pack serializes the message.
+
+TODO unpack
+
+= Repeated Fields =
+
+= Constructing Submessages =
+
+= Constructing Repeated Submessages =
+
+= Using the Allocator =
+
+= Packing with an Append Function =
