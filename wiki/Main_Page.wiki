@@ -17,6 +17,8 @@ This is an automake project, so to build it use something like:
 To install into `/usr` like a normal package would, use `--prefix=/usr`.
 
 = Getting Started =
+It might be easiest to learn with a few [Examples examples].
+
 To use the system, you should read more
 about [Generated_Code the code we generate].
 To understand how the generated code works,
