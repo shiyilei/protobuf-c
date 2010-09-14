@@ -52,9 +52,111 @@ I left most error handling out for brevity.  Notice:
   * a_message__get_packed_size returns the length of the packed data.
   * a_message__pack serializes the message.
 
-TODO unpack
+On the other hand, if you want to deserialize/unpack a message,
+you could use code like this:
+{{{
+  #include "amessage.pb-c.h"
+  #include <stdio.h>
+  #define MAX_MESSAGE_SIZE  4096
+  int main(int argc, char **argv)
+  {
+    AMessage *msg;
+    char buf[MAX_MESSAGE_SIZE];
+    while ((c=fgetc(stdin)) != EOF)
+      {
+	if (buf_size == MAX_MESSAGE_SIZE)
+	  {
+	    fprintf(stderr, "message to long for this program\n");
+	    return 1;
+	  }
+	buf[buf_size++] = c;
+      }
+    msg = a_message__unpack (NULL, buf_size, buf);
+    if (msg == NULL)
+      {
+	fprintf(stderr, "error unpacking message\n");
+	return 1;
+      }
+    printf ("a=%d", msg->a);
+    if (msg->has_b)
+      printf ("; b=%d", msg->b);
+    printf ("\n");
+    return 0;
+  } 
+}}}
 
 = Repeated Fields =
+Here is a simple file, `cmessage.proto` file:
+{{{
+   message CMessage
+   {
+      repeated int c;
+   }
+}}}
+
+You might write a program to pack a message:
+{{{
+  #include "cmessage.pb-c.h"
+  #include <stdio.h>
+  int main(int argc, char **argv)
+  {
+    CMessage msg = C_MESSAGE__INIT;  
+   void *buf;
+   unsigned len;
+   msg.n_c = argc - 1;
+   msg.c = malloc (sizeof (int) * msg.n_c);
+   for (i = 0; i < msg.n_c; i++)
+     msg.c[i] = atoi (argv[i+1]);
+    len = c_message__get_packed_size (&msg);
+    buf = malloc (len);
+    c_message__pack (&msg, buf);
+    fwrite (buf, len, 1, stdout);
+    free (msg.c);
+    free (buf);
+    return 0;
+  } 
+}}}
+I left most error handling out for brevity.  Notice:
+  * the use of the C_MESSAGE__INIT macro to construct the message
+  * we allocate buf and msg.c, so we must free them.
+  * the n_XXX member is generated for a repeated field XXX.
+
+On the other hand, if you want to deserialize/unpack a message,
+you could use code like this:
+{{{
+  #include "cmessage.pb-c.h"
+  #include <stdio.h>
+  #define MAX_MESSAGE_SIZE  4096
+  int main(int argc, char **argv)
+  {
+    AMessage *msg;
+    char buf[MAX_MESSAGE_SIZE];
+    while ((c=fgetc(stdin)) != EOF)
+      {
+	if (buf_size == MAX_MESSAGE_SIZE)
+	  {
+	    fprintf(stderr, "message to long for this program\n");
+	    return 1;
+	  }
+	buf[buf_size++] = c;
+      }
+    msg = c_message__unpack (NULL, buf_size, buf);
+    if (msg == NULL)
+      {
+	fprintf(stderr, "error unpacking message\n");
+	return 1;
+      }
+    for (i = 0; i < msg->n_c; i++)
+      {
+        if (i > 0)
+	  printf (", ");
+	printf ("%d", msg->c[i]);
+      }
+    printf ("\n");
+    return 0;
+  } 
+}}}
+
 
 = Constructing Submessages =
 
@@ -63,3 +165,6 @@ TODO unpack
 = Using the Allocator =
 
 = Packing with an Append Function =
+
+= Language Binding Hints =
+
