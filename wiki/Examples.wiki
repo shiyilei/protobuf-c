@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary A set of easy examples, in lieu of documentation
 
 = Introduction =
 
@@ -167,4 +167,3 @@ you could use code like this:
 = Packing with an Append Function =
 
 = Language Binding Hints =
-
