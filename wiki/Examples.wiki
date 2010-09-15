@@ -157,8 +157,61 @@ you could use code like this:
   } 
 }}}
 
+= Strings =
+
+= Bytes =
+
 
 = Constructing Submessages =
+Here is a simple file, `dmessage.proto` file:
+{{{
+   message Submessage
+   {
+      required int value;
+   };
+   message DMessage
+   {
+      required Submessage d;
+      optional Submessage e;
+   }
+}}}
+
+Here is a simple program to pack a message of type `DMessage`.
+Note that `DMessage` consists of one or two integers (`d` is required and has one int; `e` is optional and has one int).
+  
+{{{
+  #include "amessage.pb-c.h"
+  #include <stdio.h>
+  int main(int argc, char **argv)
+  {
+    DMessage msg = D_MESSAGE__INIT;  
+    Submessage sub1 = SUBMESSAGE__INIT;
+    Submessage sub2 = SUBMESSAGE__INIT;
+    void *buf;
+    unsigned len;
+    if (argc < 2 || argc > 3)
+     {
+        fprintf(stderr,"usage: pack a [b]\n");
+        return 1;
+     }
+    sub1.value = atoi (argv[1]);
+    msg.a = &sub1;
+    if (argc == 3)
+      {
+         sub2.value = atoi (argv[2]);
+         msg.b = &sub2;
+      }
+    len = d_message__get_packed_size (&msg);
+    buf = malloc (len);
+    d_message__pack (&msg, buf);
+    fwrite (buf, len, 1, stdout);
+    return 0;
+  } 
+}}}
+Notice:
+  * there is no `has_` flag for optional submessages -- if the pointer is non-NULL, then we assume that it is a value.
+
+TODO: unpack
 
 = Constructing Repeated Submessages =
 
