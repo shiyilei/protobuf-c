@@ -222,3 +222,5 @@ TODO: unpack
 = Packing with an Append Function =
 
 = Language Binding Hints =
+
+= Protobuf-C For Embedded Developers (and other cross compilers) =
