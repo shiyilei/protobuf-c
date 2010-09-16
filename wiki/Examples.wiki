@@ -11,7 +11,7 @@ PLEASE CONSIDER HELPING:
   * the examples aren't finished - if you want to write a section, let me know!
   * we need a script to generate a directory of example code from this page (this page will need changing to include the filenames of the scripts in a consistent fashion.
 
-Warning (insert guy shoveling pic):  this page is partial, incomplete and the code is untested.  Eventually I plan to make an "examples" directory in the .tar.gz so you don't need to cut-n-paste. 
+*Warning (insert guy shoveling pic):  this page is partial, incomplete and the code is untested.  Eventually I plan to make an "examples" directory in the .tar.gz so you don't need to cut-n-paste. *
 
 = Simple complete example =
 
