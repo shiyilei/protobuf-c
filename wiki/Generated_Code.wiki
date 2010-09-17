@@ -159,10 +159,9 @@ We will get generated code:
     };
 }}}
 
-XXX: the following is totally wrong... but it is a nice example to exposit on, so we preserve it for editing convenience... be wary...
-
 Note that `create_service` takes ownership of `service`.
 For example, here's how to implement a convert service that takes the default radix to use:
+(XXX: untested) 
 {{{
       /* structure derived from Convert_Service. */
       typedef struct {
@@ -203,12 +202,11 @@ For example, here's how to implement a convert service that takes the default ra
       create_convert_service_from_radix (unsigned radix)
       {
         Convert_WithRadix *wr = malloc (sizeof (Convert_WithRadix));
-        ... TODO: init function ...
-        wr->base.itoa = radix_itoa;
-        wr->base.atoi = radix_atoi;
-        wr->base.destroy = (void(*)(Convert_Service *)) free;
+        static Convert_Server base_service = CONVERT__INIT(radix_); // creates names radix_atoi and radix_itoa
+        wr->base = base_service;
         wr->radix = radix;
-        return &wr->base;
+        wr->base.base.destroy = (void (*)(ProtobufCService*)) free;
+        return (ProtobufCService*) wr;
       }
 }}}
 
