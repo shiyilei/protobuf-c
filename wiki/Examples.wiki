@@ -229,3 +229,18 @@ TODO: unpack
 = Language Binding Hints =
 
 = Protobuf-C For Embedded Developers (and other cross compilers) =
+Most embedded developers need to compile protobuf-c twice:
+  # they need a copy of protoc-c that runs on their `build` environment.
+  # they need to have a copy of libprotobuf-c, which is the runtime, that is 
+compiled for the embedded platform (which we will call the `target` environment.
+
+For (1), you need to install the main protobuf package, since protoc-c uses 
+its parser and code generator libraries.  Running 'configure' as usual 
+should be fine. 
+
+For (2), you can configure with --disable-protoc which means you won't have 
+to build the main protobuf package for the embedded platform (since you 
+don't need to do code gen on the embedded platform).  They presumably are 
+used to cross-compiling, so they can probably figure out that aspect. 
+
+If embedded developers do not modify the `.proto` files, then then all they really need are the generated .pb-c.[ch] files, and then they can skip (1).
