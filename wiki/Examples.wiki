@@ -229,9 +229,11 @@ TODO: unpack
 = Language Binding Hints =
 
 = Protobuf-C For Embedded Developers (and other cross compilers) =
+TODO: move these general comments to a new page and provide an example, as promised by the page title.
+
 Most embedded developers need to compile protobuf-c twice:
-  # they need a copy of protoc-c that runs on their `build` environment.
-  # they need to have a copy of libprotobuf-c, which is the runtime, that is compiled for the embedded platform (which we will call the `target` environment.
+  # they need a copy of `protoc-c` that runs on their `build` environment (the `build` environment is for the machine on which they develop the application.
+  # they need to have a copy of libprotobuf-c, which is the runtime library, that is compiled for the embedded platform (which we will call the `target` environment).
 
 For (1), you need to install the main protobuf package, since protoc-c uses its parser and code generator libraries.  Running 'configure' as usual should be fine. 
 
