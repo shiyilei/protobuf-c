@@ -25,7 +25,7 @@ A simple file, `amessage.proto` file following the [http://code.google.com/apis/
    }
 }}}
 
-Generate .h and .c files from the command-line in you current working directory:
+Generate .h and .c files from the command-line in your current working directory:
 {{{
    protoc-c --c_out=. amessage.proto 
 }}}
@@ -64,7 +64,7 @@ int main (int argc, const char * argv[])
 }}}
 I left most error handling out for brevity.  Notice:
   * the use of the {{{A_MESSAGE__INIT}}} macro to construct the message
-  * the "has_b" member that corresponds to the optional `b` field -- required fields do not have a has_ member.
+  * the {{{has_b}}} member corresponds to the optional `b` field -- required fields do not have a {{{has_}}} member.
   * {{{amessage__get_packed_size}}} returns the length of the packed data.
   * {{{a_message__pack}}} serializes the message.
 
@@ -111,9 +111,11 @@ int main (int argc, const char * argv[])
 During linking each above program, make sure include '-lprotobuf -c'
 
 Test by piping one program into the next at command line:
-{{{ amessage_serial 10 2 | amessage_deserial 
+{{{ 
+./amessage_serialize 10 2 | ./amessage_deserialize 
 Writing: 4 serialized bytes
-Received: a=10 b=2}}}
+Received: a=10 b=2
+}}}
 
 = Repeated Fields =
 Here is a simple file, `cmessage.proto` file:
