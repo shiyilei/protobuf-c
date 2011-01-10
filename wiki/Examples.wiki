@@ -108,7 +108,7 @@ int main (int argc, const char * argv[])
     return 0;
 }
 }}}
-During linking each above program, make sure include '-lprotobuf -c'
+During linking each above program, make sure to include '-lprotobuf-c'
 
 Test by piping one program into the next at command line:
 {{{ 
@@ -120,131 +120,197 @@ Received: a=10 b=2
 = Repeated Fields =
 Here is a simple file, `cmessage.proto` file:
 {{{
-   message CMessage
-   {
-      repeated int c;
-   }
+message CMessage
+{
+    repeated int32 c=1;
+}
 }}}
 
-You might write a program to pack a message:
+Serialize/pack the CMessage as follows:
 {{{
-  #include "cmessage.pb-c.h"
-  #include <stdio.h>
-  int main(int argc, char **argv)
-  {
-    CMessage msg = C_MESSAGE__INIT;  
-   void *buf;
-   unsigned len;
-   msg.n_c = argc - 1;
-   msg.c = malloc (sizeof (int) * msg.n_c);
-   for (i = 0; i < msg.n_c; i++)
-     msg.c[i] = atoi (argv[i+1]);
-    len = c_message__get_packed_size (&msg);
-    buf = malloc (len);
-    c_message__pack (&msg, buf);
-    fwrite (buf, len, 1, stdout);
-    free (msg.c);
-    free (buf);
+#include <stdio.h>
+#include <stdlib.h>
+#include "cmessage.pb-c.h"
+
+int main (int argc, const char * argv[]) 
+{
+    CMessage msg = CMESSAGE__INIT;  // CMessage (repeated int32)
+    void *buf;                      // Buffer to store serialized data
+    unsigned len,i;                 // Length of serialized data
+    
+    msg.n_c = argc - 1;                      // Save number of repeated int32
+    msg.c = malloc (sizeof (int) * msg.n_c); // Allocate memory to store int32
+    for (i = 0; i < msg.n_c; i++)
+        msg.c[i] = atoi (argv[i+1]);         // Access msg.c[] as array 
+    len = cmessage__get_packed_size (&msg);  // This is calculated packing length
+    buf = malloc (len);                      // Allocate required serialized buffer length 
+    cmessage__pack (&msg, buf);              // Pack the data
+
+    fprintf(stderr,"Writing %d serialized bytes\n",len); // See the length of message
+    fwrite (buf, len, 1, stdout);            // Write to stdout to allow direct command line piping
+
+    free (msg.c); // Free storage for repeated int32             
+    free (buf);   // Free serialized buffer
     return 0;
-  } 
+}
 }}}
 I left most error handling out for brevity.  Notice:
-  * the use of the C_MESSAGE__INIT macro to construct the message
-  * we allocate buf and msg.c, so we must free them.
+  * the use of the {{{C_MESSAGE__INIT}}} macro to construct the message
   * the n_XXX member is generated for a repeated field XXX.
 
-On the other hand, if you want to deserialize/unpack a message,
-you could use code like this:
+On the other hand, if you want to deserialize/unpack a message, try code like this:
 {{{
-  #include "cmessage.pb-c.h"
-  #include <stdio.h>
-  #define MAX_MESSAGE_SIZE  4096
-  int main(int argc, char **argv)
-  {
-    AMessage *msg;
-    char buf[MAX_MESSAGE_SIZE];
+#include <stdio.h>
+#include "cmessage.pb-c.h"
+#define MAX_MSG_SIZE  4096
+
+int main (int argc, const char * argv[]) 
+{
+    CMessage *msg;             // CMessage repeated int32
+    int i=0; char c;           // Initialize some data holders
+    uint8_t buf[MAX_MSG_SIZE]; // Create temporary buffer
+    
     while ((c=fgetc(stdin)) != EOF)
-      {
-	if (buf_size == MAX_MESSAGE_SIZE)
-	  {
-	    fprintf(stderr, "message too long for this program\n");
-	    return 1;
-	  }
-	buf[buf_size++] = c;
-      }
-    msg = c_message__unpack (NULL, buf_size, buf);
+    {
+        if (i >= MAX_MSG_SIZE)
+        {   // Must handle serialzed message size through another wrapper for multiple msgs      
+            fprintf(stderr, "message too long for allocated buffer\n");
+            return 1;
+        }
+        buf[i++] = c;
+    }
+    msg = cmessage__unpack (NULL, i, buf); // Deserialize the serialized input
     if (msg == NULL)
-      {
-	fprintf(stderr, "error unpacking message\n");
-	return 1;
-      }
+    { // Something failed
+        fprintf(stderr, "error unpacking incoming message\n");
+        return 1;
+    }
+    
     for (i = 0; i < msg->n_c; i++)
-      {
+    { // Iterate through all repeated int32
         if (i > 0)
-	  printf (", ");
-	printf ("%d", msg->c[i]);
-      }
+            printf (", ");
+        printf ("%d", msg->c[i]);
+    }
     printf ("\n");
+    
+    cmessage__free_unpacked(msg,NULL); // Free the unpacked buffer
     return 0;
-  } 
+}
 }}}
-
+Test by piping one program into the next at command line:
+{{{ 
+./cmessage_serialize 12 3 4 | ./cmessage_deserialize 
+Writing: 6 serialized bytes
+12, 3, 4
+}}}
 = Strings =
-
+TODO
 = Bytes =
-
-
+TODO
 = Constructing Submessages =
 Here is a simple file, `dmessage.proto` file:
 {{{
-   message Submessage
-   {
-      required int value;
-   };
-   message DMessage
-   {
-      required Submessage d;
-      optional Submessage e;
-   }
+message Submessage
+{
+    required int32 value=1;
+}
+
+message DMessage
+{
+    required Submessage a=1;
+    optional Submessage b=2;
+}
 }}}
 
-Here is a simple program to pack a message of type `DMessage`.
-Note that `DMessage` consists of one or two integers (`d` is required and has one int; `e` is optional and has one int).
+Here `DMessage` consists of one or two integers (`a` is one int and required; `b` is one int and optional).
   
 {{{
-  #include "amessage.pb-c.h"
-  #include <stdio.h>
-  int main(int argc, char **argv)
-  {
-    DMessage msg = D_MESSAGE__INIT;  
-    Submessage sub1 = SUBMESSAGE__INIT;
-    Submessage sub2 = SUBMESSAGE__INIT;
+#include <stdio.h>
+#include <stdlib.h>
+#include "dmessage.pb-c.h"
+
+int main (int argc, const char * argv[]) 
+{
+    DMessage msg    = DMESSAGE__INIT;   // DMESSAGE
+    Submessage sub1 = SUBMESSAGE__INIT; // SUBMESSAGE A
+    Submessage sub2 = SUBMESSAGE__INIT; // SUBMESSAGE B
     void *buf;
     unsigned len;
-    if (argc < 2 || argc > 3)
-     {
-        fprintf(stderr,"usage: pack a [b]\n");
+    
+    if (argc != 2 && argc != 3)
+    {   // Allow one or two integers
+        fprintf(stderr,"usage: dmessage a [b]\n");
         return 1;
-     }
-    sub1.value = atoi (argv[1]);
-    msg.a = &sub1;
-    if (argc == 3)
-      {
-         sub2.value = atoi (argv[2]);
-         msg.b = &sub2;
-      }
-    len = d_message__get_packed_size (&msg);
-    buf = malloc (len);
-    d_message__pack (&msg, buf);
-    fwrite (buf, len, 1, stdout);
+    }
+    sub1.value = atoi (argv[1]); 
+    msg.a = &sub1;               // Point msg.a to sub1 data
+    
+    // NOTE: has_b is not required like amessage, therefore check for NULL on deserialze
+    if (argc == 3) { sub2.value = atoi (argv[2]); msg.b = &sub2; } // Point msg.b to sub2 data
+    
+    len = dmessage__get_packed_size (&msg); // This is the calculated packing length
+    buf = malloc (len);                     // Allocate memory
+    dmessage__pack (&msg, buf);             // Pack msg, including submessages
+
+    fprintf(stderr,"Writing %d serialized bytes\n",len); // See the length of message
+    fwrite (buf, len, 1, stdout);           // Write to stdout to allow direct command line piping
+    
+    free(buf); // Free the allocated serialized buffer
     return 0;
-  } 
+}
 }}}
 Notice:
-  * there is no `has_` flag for optional submessages -- if the pointer is non-NULL, then we assume that it is a value.
+  * there is no {{{has_}}} flag for optional submessages -- if the pointer is non-NULL, then we assume that it is a value.
 
-TODO: unpack
+On the other hand, if you want to deserialize/unpack a message, try code like this:
+{{{
+#include <stdio.h>
+#include "dmessage.pb-c.h"
+#define MAX_MSG_SIZE 4096
 
+int main (int argc, const char * argv[]) 
+{
+    DMessage *msg;         // DMessage using submessages
+    Submessage *sub1,*sub2;// Submessages
+    char c; int i=0;       // Data holders
+    uint8_t buf[MAX_MSG_SIZE]; // Input data container for bytes
+    
+    while ((c=fgetc(stdin)) != EOF)
+    {
+        if (i >= MAX_MSG_SIZE)
+        {
+            fprintf(stderr,"message too long for allocated buffer\n");
+            return 1;
+        }
+        buf[i++] = c;
+    }
+    
+    msg = dmessage__unpack(NULL,i,buf); // Deserialize the serialized input
+    if (msg == NULL)
+    { // Something failed
+        fprintf(stderr,"error unpacking incoming message\n");
+        return 1;
+    }
+    sub1 = msg->a; sub2 = msg->b;
+    printf("Received: a=%d",sub1->value);
+    if (msg->b != NULL) printf(" b=%d",sub2->value);
+    printf("\n");
+    
+    dmessage__free_unpacked(msg,NULL);
+    
+    return 0;
+}
+}}}
+Test by piping one program into the next at command line:
+{{{ 
+./dmessage_serialize 4 5 | ./dmessage_deserialize 
+Writing: 8 serialized bytes
+Received: a=4 b=5
+./dmessage_serialize 4 | ./dmessage_deserialize 
+Writing: 4 serialized bytes
+Received: a=4
+}}}
 = Constructing Repeated Submessages =
 
 = Using the Allocator =
