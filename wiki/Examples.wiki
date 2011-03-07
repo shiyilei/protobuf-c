@@ -81,7 +81,7 @@ int main (int argc, const char * argv[])
     int i=0;char c;             // Initialize some data holders
     uint8_t buf[MAX_MSG_SIZE];  // Create a temporary buffer
 	
-    while ((c=fgetc(stdin)) != EOF)
+    while (fread(&c,1,1,stdin) != 0)
     {
         if (i >= MAX_MSG_SIZE)
         {   // Must handle serialized message size through another wrapper for multiple msgs
@@ -170,7 +170,7 @@ int main (int argc, const char * argv[])
     int i=0; char c;           // Initialize some data holders
     uint8_t buf[MAX_MSG_SIZE]; // Create temporary buffer
     
-    while ((c=fgetc(stdin)) != EOF)
+    while (fread(&c,1,1,stdin) != 0)
     {
         if (i >= MAX_MSG_SIZE)
         {   // Must handle serialzed message size through another wrapper for multiple msgs      
@@ -276,7 +276,7 @@ int main (int argc, const char * argv[])
     char c; int i=0;       // Data holders
     uint8_t buf[MAX_MSG_SIZE]; // Input data container for bytes
     
-    while ((c=fgetc(stdin)) != EOF)
+    while (fread(&c,1,1,stdin) != 0)
     {
         if (i >= MAX_MSG_SIZE)
         {
