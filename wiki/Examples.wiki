@@ -73,15 +73,14 @@ On the other hand, to deserialize/unpack a message, try code like this:
 #include <stdio.h>
 #include <stdlib.h>
 #include "amessage.pb-c.h"
-#define MAX_MSG_SIZE 1024 // 1K
+#define MAX_MSG_SIZE 1024
 
-int main (int argc, const char * argv[]) 
+static size_t
+read_buffer (unsigned max_length,
+                       uint8_t *out)
 {
-    AMessage *msg;              // AMessage 
-    int i=0;char c;             // Initialize some data holders
-    uint8_t buf[MAX_MSG_SIZE];  // Create a temporary buffer
-	
-    while (fread(&c,1,1,stdin) != 0)
+    uint8_t c;
+   while (fread(&c,1,1,stdin) != 0)
     {
         if (i >= MAX_MSG_SIZE)
         {   // Must handle serialized message size through another wrapper for multiple msgs
@@ -90,9 +89,17 @@ int main (int argc, const char * argv[])
         }
         buf[i++]=c;
     }
-		
-    msg = amessage__unpack(NULL,i,buf); // Deserialize the serialized data
+}
+
+
+int main (int argc, const char * argv[]) 
+{
+    AMessage *msg;
+    uint8_t buf[MAX_MSG_SIZE];  // Create a temporary buffer
+    size_t msg_len = read_buffer (MAX_MSG_SIZE, buf);
 	
+ 		
+    msg = amessage__unpack(NULL, msg_len, buf);	
     if (msg == NULL)
     {   // Something failed
         fprintf(stderr,"error unpacking incoming message\n");
@@ -166,20 +173,11 @@ On the other hand, if you want to deserialize/unpack a message, try code like th
 
 int main (int argc, const char * argv[]) 
 {
-    CMessage *msg;             // CMessage repeated int32
-    int i=0; char c;           // Initialize some data holders
-    uint8_t buf[MAX_MSG_SIZE]; // Create temporary buffer
-    
-    while (fread(&c,1,1,stdin) != 0)
-    {
-        if (i >= MAX_MSG_SIZE)
-        {   // Must handle serialzed message size through another wrapper for multiple msgs      
-            fprintf(stderr, "message too long for allocated buffer\n");
-            return 1;
-        }
-        buf[i++] = c;
-    }
-    msg = cmessage__unpack (NULL, i, buf); // Deserialize the serialized input
+    CMessage *msg;
+    uint8_t buf[MAX_MSG_SIZE];
+    size_t msg_len = read_buffer (MAX_MSG_SIZE, buf);
+
+    msg = cmessage__unpack (NULL, len, buf); // Deserialize the serialized input
     if (msg == NULL)
     { // Something failed
         fprintf(stderr, "error unpacking incoming message\n");
@@ -194,7 +192,7 @@ int main (int argc, const char * argv[])
     }
     printf ("\n");
     
-    cmessage__free_unpacked(msg,NULL); // Free the unpacked buffer
+    cmessage__free_unpacked(msg,NULL); // Free the message from unpack()
     return 0;
 }
 }}}
