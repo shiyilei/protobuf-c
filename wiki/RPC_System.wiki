@@ -69,6 +69,9 @@ and monitoring of the server.
 = RPC Example =
 Sometimes an [RPC_Example example] is much easier to follow than a dry description.
 
+= Threading =
+Limited multithreading support is available (as of Mar 22 2011 only from revision-control).  See [RPC_Threading RPC Threading for details].
+
 = TODO =
   * implement protobuf_c_rpc_client_connect()
   * more exhaustive test code
