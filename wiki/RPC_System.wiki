@@ -66,6 +66,11 @@ ProtobufC_RPC_Server *protobuf_c_rpc_server_new (ProtobufC_RPC_AddressType  type
 We return a ProtobufC_RPC_Server object to allow for additional configuration
 and monitoring of the server.
 
+= Implementing a Service =
+On the RPC server side closure_data is used by protobuf-c's RPC
+implementation internally (e.g. for keeping track of request id's) and is opaque to the application code that implements the actual underlying service:  it must pass it back it to the protobuf-c generated service closure function that will eventually send the result message
+to the client.
+
 = RPC Example =
 Sometimes an [RPC_Example example] is much easier to follow than a dry description.
 
