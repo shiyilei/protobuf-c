@@ -190,6 +190,7 @@ protobuf_c_buffer_simple_append (ProtobufCBuffer *buffer,
   size_t new_len = simp->len + len;
   if (new_len > simp->alloced)
     {
+      /* Allocate a power-of-two times the current allocation size */
       size_t new_alloced = simp->alloced * 2;
       uint8_t *new_data;
       while (new_alloced < new_len)

@@ -145,15 +145,51 @@ struct _ProtobufCBinaryData
 
 typedef struct _ProtobufCIntRange ProtobufCIntRange; /* private */
 
+typedef struct _ProtobufCMessageDescriptor ProtobufCMessageDescriptor;
+
+typedef enum
+{
+  PROTOBUF_C_ERROR_CODE_UNPACK_TRUNCATED,
+  PROTOBUF_C_ERROR_CODE_UNPACK_BAD_VARINT,
+  PROTOBUF_C_ERROR_CODE_UNPACK_BAD_PACKED_REPEATED_TYPE,
+  PROTOBUF_C_ERROR_CODE_UNPACK_BAD_TYPE,
+  PROTOBUF_C_ERROR_CODE_UNPACK_UNSUPPORTED_TAG,
+  PROTOBUF_C_ERROR_CODE_UNPACK_MISSING_REQUIRED
+} ProtobufCErrorCode;
+
+#define PROTOBUF_C_UNPACK_ERROR_STACK_SIZE   16
+typedef struct _ProtobufCErrorStackNode ProtobufCErrorStackNode;
+typedef struct _ProtobufCUnpackErrorInfo ProtobufCUnpackErrorInfo;
+struct _ProtobufCErrorStackNode
+{
+  const ProtobufCMessageDescriptor *message;
+  unsigned field_number;
+};
+struct _ProtobufCUnpackErrorInfo
+{
+  const char *message;
+  ProtobufCErrorCode code;
+  unsigned message_stack_depth;
+  ProtobufCErrorStackNode error_stack[PROTOBUF_C_UNPACK_ERROR_STACK_SIZE];
+};
+
 /* --- memory management --- */
 typedef struct _ProtobufCAllocator ProtobufCAllocator;
 struct _ProtobufCAllocator
 {
-  void *(*alloc)(void *allocator_data, size_t size);
+  void *(*alloc)(void *allocator_data, size_t size, unsigned alignment);
   void (*free)(void *allocator_data, void *pointer);
-  void *(*tmp_alloc)(void *allocator_data, size_t size);
-  unsigned max_alloca;
+
   void *allocator_data;
+
+  /* optional (if NULL): routines whose data will be automatically
+     freed at the end of the current operation */
+  void *(*tmp_alloc)(void *allocator_data, size_t size);
+
+  /* optional: function to call with information about
+     how unpacking failed. By default, prints the error message to stderr. */
+  void (*unpack_error_handler)(void *allocator_data,
+                               const ProtobufCUnpackErrorInfo *info);
 };
 
 /* This is a configurable allocator.
@@ -247,7 +283,6 @@ struct _ProtobufCEnumDescriptor
 };
 
 /* --- messages --- */
-typedef struct _ProtobufCMessageDescriptor ProtobufCMessageDescriptor;
 typedef struct _ProtobufCFieldDescriptor ProtobufCFieldDescriptor;
 typedef struct _ProtobufCMessage ProtobufCMessage;
 typedef void (*ProtobufCMessageInit)(ProtobufCMessage *);
