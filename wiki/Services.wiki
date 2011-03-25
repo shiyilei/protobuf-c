@@ -37,5 +37,21 @@ We generate two macros:
       function_prefix__ ## by_name  }
 }}}
 
+= RPC Implementations =
+RPC Implementation take advantage of the fact that all methods are marshalled through the `invoke` method of `ProtobufCService`:
+{{{
+struct _ProtobufCService
+{
+  const ProtobufCServiceDescriptor *descriptor;
+  void (*invoke)(ProtobufCService *service,
+                 unsigned          method_index,
+                 const ProtobufCMessage *input,
+                 ProtobufCClosure  closure,
+                 void             *closure_data);
+  void (*destroy) (ProtobufCService *service);
+};
+}}}
+
+
 = Destruction =
 The macros assume you don't need a destructor for this service.  That may be naive... so you must set the `destroy` function of `ProtobufCService`  before supplying the `ProtobufCService` to naive code that expects `destroy` to be adequate (or NULL to do nothing).
