@@ -84,3 +84,61 @@ protobuf_c_service_invoke_internal(ProtobufCService *service,
 
 = Destruction =
 The macros assume you don't need a destructor for this service.  That may be naive... so you must set the `destroy` function of `ProtobufCService`  before supplying the `ProtobufCService` to naive code that expects `destroy` to be adequate (or NULL to do nothing).
+
+= Example Service Implementation =
+
+We describe the example in `example-server.c` and `example-client.c` whose type (given in file `test.proto`) looks like:
+{{{
+package foo;
+
+message LookupResult
+{
+  optional Person person = 1;
+}
+
+message Name {
+  optional string name = 1;
+};
+
+service DirLookup {
+  rpc ByName (Name) returns (LookupResult);
+}
+}}}
+
+
+
+{{{
+     typedef struct
+     {
+       // Foo_DirLookup must be the
+       // first member of structure for casting below to work.
+       Foo_DirLookup base;
+
+       // any additional data required by the service follows.
+       MYSQL *db;
+     } Foo_DirLookup_Mysql;
+
+     ProtobufCService *make_foo_dir_lookup_from_mysql (MYSQL *db_handle)
+     {
+       Foo_DirLookup_Mysql tmp
+            = { FOO__DIR_LOOKUP__INIT(mysql__),
+                b_handle };
+       Foo_DirLookup_Mysql *rv = malloc (sizeof (Foo_DirLookup_Mysql));
+       *rv = tmp;
+       rv->base->base.destroy = mysql_service__destroy;
+       return &rv->base.base;
+     }
+     static void mysql__by_name (...)
+     {
+      Foo_DirLookup_Mysql *s = (Foo_DirLookup_Mysql *) service;
+       /* omitted for clarity  --
+           would use mysql calls to fill the response
+           and invoke the closure */
+     }
+     static void mysql_service__destroy (ProtobufCService *service)
+     {
+       Foo_DirLookup_Mysql *s = (Foo_DirLookup_Mysql *) service;
+       mysql_close (s->db);
+       free (s);
+     }
+}}}
