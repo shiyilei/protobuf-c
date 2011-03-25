@@ -128,12 +128,17 @@ service DirLookup {
        rv->base->base.destroy = mysql_service__destroy;
        return &rv->base.base;
      }
-     static void mysql__by_name (...)
+     static void 
+     mysql__by_name (Foo__DirLookup_Service *service,
+                     const Foo__Name        *input,
+                     Foo__LookupResult_Closure closure,
+                     void                   *closure_data)
      {
       Foo_DirLookup_Mysql *s = (Foo_DirLookup_Mysql *) service;
        /* omitted for clarity  --
            would use mysql calls to fill the response
            and invoke the closure */
+       ...
      }
      static void mysql_service__destroy (ProtobufCService *service)
      {
