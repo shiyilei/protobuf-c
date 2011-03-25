@@ -24,9 +24,17 @@ When using the code generator, the service is "derived" from ProtobufCService li
                   void *closure_data);
  };
 }}}
-We provide two macros:
-   * `FOO__DIR_LOOKUP__BASE_INIT` which defines merely the functions for `base`
-   * `FOO__DIR_LOOKUP__INIT(function_prefix__)` which assumes that all the methods required by this service are `function_prefix__` followed by the method name.
+We generate two macros:
+   * `FOO__DIR_LOOKUP__BASE_INIT` which defines merely the functions for `base`.  It looks like:
+{{{
+#define FOO__DIR_LOOKUP__BASE_INIT \
+    { &foo__dir_lookup__descriptor, protobuf_c_service_invoke_internal, NULL }
+}}}
+   * `FOO__DIR_LOOKUP__INIT(function_prefix__)` which assumes that all the methods required by this service are `function_prefix__` followed by the method name.  It looks like:
+
+#define FOO__DIR_LOOKUP__INIT(function_prefix__) \
+    { FOO__DIR_LOOKUP__BASE_INIT,\
+      function_prefix__ ## by_name  }
 
 = Details =
 
