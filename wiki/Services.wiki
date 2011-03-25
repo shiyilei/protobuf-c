@@ -31,14 +31,11 @@ We generate two macros:
     { &foo__dir_lookup__descriptor, protobuf_c_service_invoke_internal, NULL }
 }}}
    * `FOO__DIR_LOOKUP__INIT(function_prefix__)` which assumes that all the methods required by this service are `function_prefix__` followed by the method name.  It looks like:
-
+{{{
 #define FOO__DIR_LOOKUP__INIT(function_prefix__) \
     { FOO__DIR_LOOKUP__BASE_INIT,\
       function_prefix__ ## by_name  }
+}}}
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Destruction =
+The macros assume you don't need a destructor for this service.  That may be naive... so you must set the `destroy` function of `ProtobufCService`  before supplying the `ProtobufCService` to naive code that expects `destroy` to be adequate (or NULL to do nothing).
