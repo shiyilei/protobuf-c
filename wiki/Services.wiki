@@ -37,6 +37,21 @@ We generate two macros:
       function_prefix__ ## by_name  }
 }}}
 
+We also generate a function for each method:
+ void foo__dir_lookup__by_name(ProtobufCService *service,
+                               const Foo__Name *input,
+                               Foo__LookupResult_Closure closure,
+                               void *closure_data)
+ {
+   PROTOBUF_C_ASSERT (service->descriptor == &foo__dir_lookup__descriptor);
+   service->invoke(service, 0, (const ProtobufCMessage *) input, (ProtobufCClosure) closure, closure_data);
+ }
+Note that foo__dir_lookup__by_name() takes a `ProtobufCService`, not a 
+`Foo__DirLookup_Service`:  that's because `foo__dir_lookup__by_name` also works on `ProtobufCService`s that are defined by an RPC system.  That's why is NOT implemented:
+  Foo__DirLookup_Service *s = (Foo__DirLookup_Service *) service;
+  s->by_name (s, input, closure, closure_data);
+That would not work for a service implemented by an RPC system.
+
 = RPC Implementations =
 RPC Implementation take advantage of the fact that all methods are marshalled through the `invoke` method of `ProtobufCService`:
 {{{
