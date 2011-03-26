@@ -48,8 +48,8 @@ We also generate a function for each method:
    service->invoke(service, 0, (const ProtobufCMessage *) input, (ProtobufCClosure) closure, closure_data);
  }
 }}}
-Note that foo__dir_lookup__by_name() takes a `ProtobufCService`, not a 
-`Foo__DirLookup_Service`:  that's because `foo__dir_lookup__by_name` also works on `ProtobufCService`s that are defined by an RPC system.  That's why is NOT implemented:
+Note that `foo__dir_lookup__by_name()` takes a `ProtobufCService`, not a 
+`Foo__DirLookup_Service`:  that's because `foo__dir_lookup__by_name` also works on `ProtobufCService`s that are defined by an RPC system.  That's why it is NOT implemented:
 {{{
   Foo__DirLookup_Service *s = (Foo__DirLookup_Service *) service;
   s->by_name (s, input, closure, closure_data);
