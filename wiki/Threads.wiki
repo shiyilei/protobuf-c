@@ -14,6 +14,6 @@ Core `protobuf-c` is thread-safe.
 == Fine print ==
 Well, if you supply an allocator that you use in multiple threads, it must be thread-safe.  That works fine for the default allocators (presuming that `malloc`, `realloc` and `free` are thread-safe).  If you are providing a custom allocator that you use in multiple threads, it has to be itself thread-safe.
 
-The core of the [Service] implementation is thread-safe.  However, most of the burden of thread-safety is thrust upon the implementations of `ProtobufCService`.
+The core of the [Services] implementation is thread-safe.  However, most of the burden of thread-safety is thrust upon the implementations of `ProtobufCService`.
 
 = Details =
