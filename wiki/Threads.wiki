@@ -1,0 +1,19 @@
+#summary Thread support in protobuf-c
+
+= Introduction =
+
+Core `protobuf-c` is thread-neutral:  it never modifies any structures that can potentially be shared.
+
+Well, you are responsible for certain parts.  For example, we assume that your allocator can be used without any sort of locking (which is true for `malloc()`, `free()` and `realloc()` - so the default allocator should be fine.)
+
+The RPC system is not:  however, it can be used in many multithreaded environments as described below.
+
+= Good News =
+Core `protobuf-c` is thread-safe.
+
+== Fine print ==
+Well, if you supply an allocator that you use in multiple threads, it must be thread-safe.  That works fine for the default allocators (presuming that `malloc`, `realloc` and `free` are thread-safe).  If you are providing a custom allocator that you use in multiple threads, it has to be itself thread-safe.
+
+The core of the [Service] implementation is thread-safe.  However, most of the burden of thread-safety is thrust upon the implementations of `ProtobufCService`.
+
+= Details =
