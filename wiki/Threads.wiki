@@ -16,4 +16,7 @@ Well, if you supply an allocator that you use in multiple threads, it must be th
 
 The core of the [Services] implementation is thread-safe.  However, most of the burden of thread-safety is thrust upon the implementations of `ProtobufCService`.
 
-= Details =
+= RPC =
+Of course single-threaded apps are ok.  Many protocols could be implemented within the framework of the dispatch - that is one easy way to handle things.
+
+Another, probably the best, paradigm, is to run `protobuf-c`'s dispatch in a single thread, and allow `protobuf-c` to proxy your response from a different thread.
