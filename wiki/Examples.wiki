@@ -310,6 +310,108 @@ Writing: 4 serialized bytes
 Received: a=4
 }}}
 = Constructing Repeated Submessages =
+Here is a simple file, `dmessage.proto` file:
+{{{
+message Submessage
+{
+    required int32 value=1;
+}
+
+message EMessage
+{
+    repeated Submessage a=1;
+}
+}}}
+
+Here `DMessage` consists of one or two integers (`a` is one int and required; `b` is one int and optional).
+  
+{{{
+#include <stdio.h>
+#include <stdlib.h>
+#include "dmessage.pb-c.h"
+
+int main (int argc, const char * argv[]) 
+{
+    DMessage msg    = DMESSAGE__INIT;   // DMESSAGE
+    Submessage sub1 = SUBMESSAGE__INIT;
+    Submessage sub2 = SUBMESSAGE__INIT; // SUBMESSAGE B
+    Submessage **subs;
+    void *buf;
+    unsigned len;
+    subs = malloc (sizeof (Submessage*) * (argc-1));
+    for (i = 1; i < argc; i++)
+       {
+         subs[i-1] = malloc (sizeof (Submessage));
+         submessage__init (subs[i-1]);
+         subs[i-1]->value = atoi(argv[i]);
+      }    
+    msg.n_a = argc-1;
+    msg.a = subs;
+    len = emessage__get_packed_size (&msg); // This is the calculated packing length
+    buf = malloc (len);                     // Allocate memory
+    emessage__pack (&msg, buf);             // Pack msg, including submessages
+
+    fprintf(stderr,"Writing %d serialized bytes\n",len); // See the length of message
+    fwrite (buf, len, 1, stdout);           // Write to stdout to allow direct command line piping
+    
+    free(buf); // Free the allocated serialized buffer
+   for (i = 1; i < argc; i++)
+      free (subs[i]);
+   free (subs); 
+   return 0;
+}
+}}}
+Notice:
+  * there is no {{{has_}}} flag for optional submessages -- if the pointer is non-NULL, then we assume that it is a value.
+
+On the other hand, if you want to deserialize/unpack a message, try code like this:
+{{{
+#include <stdio.h>
+#include "emessage.pb-c.h"
+#define MAX_MSG_SIZE 4096
+
+int main (int argc, const char * argv[]) 
+{
+    EMessage *msg;
+    Submessage *sub1,*sub2;// Submessages
+    char c; int i=0;       // Data holders
+    uint8_t buf[MAX_MSG_SIZE]; // Input data container for bytes
+    
+    while (fread(&c,1,1,stdin) != 0)
+    {
+        if (i >= MAX_MSG_SIZE)
+        {
+            fprintf(stderr,"message too long for allocated buffer\n");
+            return 1;
+        }
+        buf[i++] = c;
+    }
+    
+    msg = emessage__unpack(NULL,i,buf); // Deserialize the serialized input
+    if (msg == NULL)
+    { // Something failed
+        fprintf(stderr,"error unpacking incoming message\n");
+        return 1;
+    }
+    for (i = 0; i < msg->n_a; i++)
+       printf ("%d\n", msg->a[i]->value);
+    
+    emessage__free_unpacked(msg,NULL);
+    
+    return 0;
+}
+}}}
+Test by piping one program into the next at command line:
+{{{ 
+./emessage_serialize 4 5 | ./emessage_deserialize 
+Writing: 8 serialized bytes
+4
+5
+./emessage_serialize 4 5 8| ./emessage_deserialize 
+4
+5
+8
+}}}
 
 = Using the Allocator =
 
