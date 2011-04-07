@@ -310,7 +310,7 @@ Writing: 4 serialized bytes
 Received: a=4
 }}}
 = Constructing Repeated Submessages =
-Here is a simple file, `dmessage.proto` file:
+Here is a simple file, `emessage.proto` file:
 {{{
 message Submessage
 {
@@ -332,9 +332,6 @@ Here `DMessage` consists of one or two integers (`a` is one int and required; `b
 
 int main (int argc, const char * argv[]) 
 {
-    DMessage msg    = DMESSAGE__INIT;   // DMESSAGE
-    Submessage sub1 = SUBMESSAGE__INIT;
-    Submessage sub2 = SUBMESSAGE__INIT; // SUBMESSAGE B
     Submessage **subs;
     void *buf;
     unsigned len;
@@ -361,8 +358,7 @@ int main (int argc, const char * argv[])
    return 0;
 }
 }}}
-Notice:
-  * there is no {{{has_}}} flag for optional submessages -- if the pointer is non-NULL, then we assume that it is a value.
+Notice that repeated fields create two fields, in this case `n_a`, the number of submessages, and `a` the submessages themselves.  Also note that `a` is an array of _pointers_ to messages. 
 
 On the other hand, if you want to deserialize/unpack a message, try code like this:
 {{{
@@ -373,8 +369,7 @@ On the other hand, if you want to deserialize/unpack a message, try code like th
 int main (int argc, const char * argv[]) 
 {
     EMessage *msg;
-    Submessage *sub1,*sub2;// Submessages
-    char c; int i=0;       // Data holders
+    char c; int i=0;
     uint8_t buf[MAX_MSG_SIZE]; // Input data container for bytes
     
     while (fread(&c,1,1,stdin) != 0)
@@ -389,7 +384,7 @@ int main (int argc, const char * argv[])
     
     msg = emessage__unpack(NULL,i,buf); // Deserialize the serialized input
     if (msg == NULL)
-    { // Something failed
+    {
         fprintf(stderr,"error unpacking incoming message\n");
         return 1;
     }
