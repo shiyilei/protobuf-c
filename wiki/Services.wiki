@@ -51,7 +51,7 @@ We also generate a function for each method:
 Note that `foo__dir_lookup__by_name()` takes a `ProtobufCService`, not a 
 `Foo__DirLookup_Service`:  that's because `foo__dir_lookup__by_name` also works on `ProtobufCService`s that are defined by an RPC system.  That's why it is NOT implemented:
 {{{
-  Foo__DirLookup_Service *s = (Foo__DirLookup_Service *) service;
+  Foo__DirLookup_Service *s = (Foo__DirLookup_Service *) service; // WARNING: cast is not ok for RPC systems
   s->by_name (s, input, closure, closure_data);
 }}}
 That would not work for a service implemented by an RPC system.
