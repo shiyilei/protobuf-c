@@ -1,8 +1,8 @@
-#summary How to use protobuf-c in a Multithreading Environment
+#summary How to use protobuf-c's RPC in a Multithreading Environment
 
 = Introduction =
 
-protobuf-c was designed with "main-loop" style concurrency -- meaning we can handle multiple connections, but we handle them by multiplexing on I/O (in the form of file descriptors), rather than spawning new threads.
+protobuf-c's RPC was designed with "main-loop" style concurrency -- meaning we can handle multiple connections, but we handle them by multiplexing on I/O (in the form of file descriptors), rather than spawning new threads.
 
 Currently there are many restrictions for using RPC with multiple threads, but it can be done.  There are also things we wish to do eventually, if they can be done pretty cleanly.
 
