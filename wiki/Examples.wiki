@@ -70,20 +70,19 @@ On the other hand, to deserialize/unpack a message, try code like this:
 #include "amessage.pb-c.h"
 #define MAX_MSG_SIZE 1024
 
-static size_t
-read_buffer (unsigned max_length,
-                       uint8_t *out)
+static size_t read_buffer (unsigned max_length, uint8_t *out)
 {
     uint8_t c;
-   while (fread(&c,1,1,stdin) != 0)
+    while (fread(&c,1,1,stdin) != 0)
     {
         if (i >= MAX_MSG_SIZE)
         {   // Must handle serialized message size through another wrapper for multiple msgs
             fprintf(stderr,"message too long for allocated buffer\n");
             return 1;
         }
-        buf[i++]=c;
+        out[i++]=c;
     }
+    return i;
 }
 
 
