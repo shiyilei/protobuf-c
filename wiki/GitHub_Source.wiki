@@ -1,0 +1,5 @@
+== Source code moved to !GitHub ==
+
+The source code repository for `protobuf-c` has been converted to git and is now [https://github.com/protobuf-c/protobuf-c available on GitHub].
+
+The old Subversion repository is [https://code.google.com/p/protobuf-c/source/checkout archived here].
