@@ -1,0 +1,5 @@
+== Issue tracking moved to !GitHub ==
+
+The issue tracker has moved to [https://github.com/protobuf-c/protobuf-c/issues GitHub].
+
+Old issues are [https://code.google.com/p/protobuf-c/issues/list archived here].
