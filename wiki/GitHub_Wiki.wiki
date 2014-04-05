@@ -1,0 +1,5 @@
+== Wiki moved to !GitHub ==
+
+The wiki has moved to [https://github.com/protobuf-c/protobuf-c/wiki GitHub].
+
+The old wiki is [https://code.google.com/p/protobuf-c/w/list archived here].
